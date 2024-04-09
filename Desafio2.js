@@ -99,14 +99,16 @@ class ProductManager {
     }
 
     deleteProductById = async(id) => {        
-    //Leo el archivo
-    await this.readFile()
-    //Encontrar el ID en el array productsReadFile y eliminarlo
-    const productFilter = this.productsReadFile.filter(product => product.id !== id);
-    
-    //Volver a escribir el array al archivo
-    this.products = productFilter
-    await this.writeFile()
+        //Valido si el producto existe en el array
+        const productExists = await this.getProductById(id)
+        //Si existe filtro para que me devuelva un nuevo array sin ese producto y sino mensaje en consola
+        if (productExists !== null && productExists!== undefined){
+            const productFilter = this.productsReadFile.filter(product => product.id !== id);
+            
+            this.products = productFilter
+
+            await this.writeFile()        
+        }
     }
 
     getProductById = async(id) => {
@@ -115,7 +117,7 @@ class ProductManager {
         
         const product = this.productsReadFile.find(product => product.id === id);
         if (!product) {
-            console.error("Product not found");
+            console.error("The product doesn't exists");
             return;
         }
         
@@ -153,7 +155,7 @@ const PMInstanciado = new ProductManager ()
 
 
 //Eliminar producto por id
-//  await PMInstanciado.deleteProductById(2)
+// await PMInstanciado.deleteProductById(2)
 
 //Modificar producto por id, update
 // const productUpdated = {
