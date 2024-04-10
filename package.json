@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/marinapamparas/backendcoder#readme",
   "dependencies": {
+    "express": "^4.19.2",
     "moment": "^2.30.1"
   }
 }
