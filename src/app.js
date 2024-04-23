@@ -1,50 +1,45 @@
 import express from 'express';
-import { ProductManager } from './ProductManager.js';
+import config from './config.js';
+import products from './routes/products.routes.js';
+import carts from './routes/carts.routes.js';
 
 //Instancio el framework y la clase
 const app = express ();
-const PME = new ProductManager ()
 
 
-//Endpoint con query
-app.get('/products', async (req,res)=>{
-    try{
-        const productsFile = await PME.getProducts()
 
-        const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
+//parseo de las url:
+app.use(express.json());
+app.use(express.urlencoded({ extended:true}));
 
-        let limitedProducts = productsFile;
-        if (limit && !isNaN(limit)) {
-            limitedProducts = limitedProducts.slice(0, limit);
-        }
+//la redireccion a las rutas:
+app.use('/api/products', products);
+app.use('/api/carts', carts);
 
-        res.send({status:1, payload: limitedProducts})
+//la parte estatica que se muestra:
+// app.use('/', express.static('src/public'));
+
+
+
+// //Endpoint con params
+// app.get('/products/:pid', async (req,res)=>{
     
-    }catch (error){
-        console.error('Error al leer el archivo de productos:', error);
-        res.status(500).send('Error del servidor');
-    }
-})
-
-
-//Endpoint con params
-app.get('/products/:pid', async (req,res)=>{
-    
-    try{ 
-        const pid= parseInt(req.params.pid);
+//     try{ 
+//         const pid= parseInt(req.params.pid);
         
-        const productsId = await PME.getProductById(pid)
+//         const productsId = await PME.getProductById(pid)
         
-        res.send({status:1, payload: productsId})
+//         res.send({status:1, payload: productsId})
 
-    }catch (error){
-        console.error('Error al leer el archivo de productos:', error);
-        res.status(500).send('Error del servidor');
-    }
+//     }catch (error){
+//         console.error('Error al leer el archivo de productos:', error);
+//         res.status(500).send('Error del servidor');
+//     }
     
-})
+// })
 
 //Escucha
-app.listen (8080, ()=>{
+app.listen (config.PORT, ()=>{
     console.log('Servidor activo en puerto 8080')
+    console.log(config.DIRNAME)
 })

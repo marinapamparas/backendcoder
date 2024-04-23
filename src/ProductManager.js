@@ -2,20 +2,20 @@ import fs from 'fs';
 
 
 export class ProductManager {
-    constructor(){
+    constructor(fileName){
         this.products = [];
         this.productsReadFile = [];
         this.lastId = 0;
         this.path = "C://Users//Marina//Desktop//backentregables//storage//";
-        this.fileName = "ArrayProducts.txt"
+        this.fileName = fileName;
         this.fullPath = this.path + this.fileName
     }
 
     
 
-    addProduct = async(title, description, price, thumbnail, code, stock) =>  {
+    addProduct = async(title, description, price, thumbnail, code, stock, category) =>  {
         //validaciones
-        if (!title || !description || !price || !thumbnail || !code || !stock) {
+        if (!title || !description || !price || !code || !stock || !category) {
             console.error("All fields are mandatory");
             return;
         }
@@ -33,7 +33,9 @@ export class ProductManager {
             price,
             thumbnail,
             code,
-            stock
+            stock,
+            status: true,
+            category
         };
        
         this.products.push(newProduct);
@@ -77,7 +79,6 @@ export class ProductManager {
         //Leo el archivo
         await this.readFile()
         //Encontrar el producto por ID y modificarlo
-        console.log(this.productsReadFile)
         const newArray = this.productsReadFile.map(items => {
             if (items.id === id){
             return {
@@ -87,7 +88,8 @@ export class ProductManager {
                 price: updateItem.price,
                 thumbnail: updateItem.thumbnail,
                 code: updateItem.code,
-                stock: updateItem.stock
+                stock: updateItem.stock,
+                category: updateItem.category
             };
             } 
             return items;  
