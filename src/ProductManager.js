@@ -6,7 +6,7 @@ export class ProductManager {
         this.products = [];
         this.productsReadFile = [];
         this.lastId = 0;
-        this.path = "C://Users//Marina//Desktop//backentregables//storage//";
+        this.path = "./storage/";
         this.fileName = fileName;
         this.fullPath = this.path + this.fileName
     }
