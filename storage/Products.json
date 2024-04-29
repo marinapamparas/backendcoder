@@ -1,42 +1,38 @@
 [
   {
     "id": 1,
-    "title": "sdg",
-    "description": "sdg",
-    "price": "4",
-    "code": "128",
-    "stock": "2",
+    "title": "Rodillo de cocina",
+    "description": "Rodillo de cocina para amasar",
+    "price": "1000",
+    "thumbnail": [
+      "C:\\Users\\Marina\\Desktop\\backentregables\\src\\public\\img\\rodillo de cocina.jpg"
+    ],
+    "code": "123",
+    "stock": "10",
     "status": true,
-    "category": "wfhbef"
+    "category": "Cocina"
   },
   {
     "id": 2,
-    "title": "sdg",
-    "description": "sdg",
-    "price": "4",
-    "code": "1282",
-    "stock": "2",
+    "title": "Copa de vino",
+    "description": "Copa de vidrio para tomar",
+    "price": "2000",
+    "thumbnail": [
+      "C:\\Users\\Marina\\Desktop\\backentregables\\src\\public\\img\\copa de vino.jpeg"
+    ],
+    "code": "456",
+    "stock": "10",
     "status": true,
-    "category": "wfhbef"
+    "category": "Cocina"
   },
   {
     "id": 3,
-    "title": "sdg",
-    "description": "sdg",
-    "price": "4",
-    "code": "12823",
-    "stock": "2",
     "status": true,
-    "category": "wfhbef"
-  },
-  {
-    "id": 4,
-    "title": "sdg",
-    "description": "sdg",
-    "price": "4",
-    "code": "128235",
-    "stock": "2",
-    "status": true,
-    "category": "wfhbef"
+    "title": "Plato playo",
+    "description": "plato playo para comer",
+    "price": 250,
+    "code": 789,
+    "stock": 10,
+    "category": "Cocina"
   }
 ]
