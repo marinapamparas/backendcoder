@@ -46,7 +46,7 @@ products.post('/', uploader.single('thumbnail'), async (req,res)=>{
             title,
             description,
             price,
-            thumbnail= [req.file.path],
+            thumbnail,
             code,
             stock,
             category

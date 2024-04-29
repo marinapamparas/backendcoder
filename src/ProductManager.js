@@ -1,11 +1,10 @@
-import fs from 'fs';
+import fs, { read } from 'fs';
 
 
 export class ProductManager {
     constructor(fileName){
         this.products = [];
         this.productsReadFile = [];
-        this.lastId = 0;
         this.path = "./storage/";
         this.fileName = fileName;
         this.fullPath = this.path + this.fileName
@@ -14,6 +13,8 @@ export class ProductManager {
     
 
     addProduct = async(title, description, price, thumbnail, code, stock, category) =>  {
+        this.products = []
+        
         //validaciones
         if (!title || !description || !price || !code || !stock || !category) {
             console.error("All fields are mandatory");
@@ -25,9 +26,21 @@ export class ProductManager {
             console.error("This code allready exists");
             return;
         }
+
+        await this.readFile()
+        
+        const lastIndex = this.productsReadFile.length - 1;
+        
+        let newId = 0        
+        if(lastIndex === -1 || lastIndex === undefined){
+            newId = 1
+        }else{
+            let object = this.productsReadFile[lastIndex]
+            newId = object.id + 1
+        }
         
         const newProduct = {
-            id: ++this.lastId,
+            id: newId,
             title,
             description,
             price,
@@ -37,11 +50,12 @@ export class ProductManager {
             status: true,
             category
         };
-       
-        this.products.push(newProduct);
+      
+        this.productsReadFile.push(newProduct);
 
-
-        await this.writeFile()
+        this.products = this.productsReadFile;
+        
+        await this.writeFile();
     }
         
     readFile = async () => {
@@ -68,9 +82,19 @@ export class ProductManager {
     writeFile = async() => {        
         //Conversión de tipo objeto a tipo string de mis productos
         let productosString = JSON.stringify(this.products, null, 2)
-
+        
         //Escritura de archivo
         await fs.promises.writeFile (this.fullPath, productosString);      
+         
+        return
+    }
+    
+    appendProduct = async(productAdd) => {        
+        //Conversión de tipo objeto a tipo string de mis productos
+        let productosString = JSON.stringify(productAdd, null, 2)
+        
+        //Escritura de archivo
+        await fs.promises.appendFile (this.fullPath, productosString);      
          
         return
     }

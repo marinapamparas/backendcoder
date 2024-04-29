@@ -8,7 +8,6 @@ export class CartManager{
         this.fullPath = this.path + this.fileName;
         this.carts = [];
         this.cartsReadFile = [];
-        this.lastId = 0
         this.quantity = 1
     }
 
@@ -45,12 +44,26 @@ export class CartManager{
 
     createCart = async() =>  {
 
+        await this.readFile()
+
+        const lastIndex = this.cartsReadFile.length - 1;
+        
+        let newId = 0        
+        if(lastIndex === -1 || lastIndex === undefined){
+            newId = 1
+        }else{
+            let object = this.cartsReadFile[lastIndex]
+            newId = object.id + 1
+        }
+
         const newCart = {
-            id: ++this.lastId,
+            id: newId,
             products: []
         };
        
-        this.carts.push(newCart);
+        this.cartsReadFile.push(newCart);
+
+        this.carts = this.cartsReadFile;
        
 
         await this.writeFile()
