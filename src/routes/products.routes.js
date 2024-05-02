@@ -1,9 +1,13 @@
 import { Router } from "express";
 import { ProductManager } from '../ProductManager.js';
 import { uploader } from "../uploader.js";
+//import { socketServer } from './app.js';
+//import initSocket from '../sockets.js';
+
 
 const products = Router();
 const PME = new ProductManager ("Products.json")
+//const io = initSocket();
 
 
 products.get('/', async (req,res)=>{
@@ -42,6 +46,11 @@ products.get('/:pid', async (req,res)=>{
 
 products.post('/', uploader.single('thumbnail'), async (req,res)=>{
     try{
+        
+        // Obtenemos la instancia global del objeto socketServer
+        const socketServer = req.app.get('socketServer');
+        
+
         const {
             title,
             description,
@@ -52,8 +61,12 @@ products.post('/', uploader.single('thumbnail'), async (req,res)=>{
             category
         } = req.body;
 
-        const addProduct = await PME.addProduct(title, description,  price, thumbnail, code, stock, category)
+        const addProduct = await PME.addProduct(title, description,  price, thumbnail, code, stock, category)           
+
         res.status(200).send({payload: addProduct})
+
+        //emito el evento productsChanged
+        socketServer.emit('productsChanged', 'Se cargo un nuevo producto' );
     
     }catch (error){
         console.error('Error al cargar el producto:', error);
@@ -78,9 +91,15 @@ products.put('/:pid', async (req,res)=>{
 
 products.delete('/:pid', async (req,res)=>{
     try{
+        // Obtenemos la instancia global del objeto socketServer
+        const socketServer = req.app.get('socketServer');
+
         const pid= parseInt(req.params.pid);
         const productsId = await PME.deleteProductById(pid)
         res.status(200).send({payload: productsId})
+
+        //emito el evento productsChanged
+        socketServer.emit('productsChanged', 'Se elimino un producto' );
 
     }catch (error){
         console.error('Error, no se pude borrar el producto:', error);

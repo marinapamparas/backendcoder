@@ -34,5 +34,15 @@
     "code": 789,
     "stock": 10,
     "category": "Cocina"
+  },
+  {
+    "id": 4,
+    "title": "Servilletas",
+    "description": "Pack de servilletas de papel",
+    "price": 500,
+    "code": 866,
+    "stock": 10,
+    "status": true,
+    "category": "Cocina"
   }
 ]
