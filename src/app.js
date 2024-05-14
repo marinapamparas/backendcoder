@@ -5,6 +5,7 @@ import carts from './routes/carts.routes.js';
 import views from './routes/views.routes.js'
 import handlebars from "express-handlebars";
 import initSocket from './sockets.js';
+import mongoose from 'mongoose';
 
 //Instancio el framework y la clase
 const app = express ();
@@ -29,8 +30,10 @@ app.use('/api/views', views)
 
 
 //Escucha Http
-const expressInstance = app.listen(config.PORT, () => {
-    console.log(`App activa en puerto ${config.PORT}`);
+const expressInstance = app.listen(config.PORT, async () => {
+
+    await mongoose.connect(config.MONGOSDB_URI);
+    console.log(`Servidor activo en puerto ${config.PORT} enlazada a bbdd`)
 });
 
 //Escucha Socket

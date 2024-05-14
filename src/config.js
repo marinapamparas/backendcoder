@@ -9,7 +9,10 @@ const config = {
     // get UPLOAD_DIR() { return `${this.DIRNAME}/public/img` }
 
     DIRNAME: path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:\/)/, '$1')), // Win
-    get UPLOAD_DIR() { return `${this.DIRNAME}/public/img` }
+    get UPLOAD_DIR() { return `${this.DIRNAME}/public/img` },
+
+    //MONGOSDB_URI: 'mongodb+srv://coderbackend:coderbackend@clustercode.eoywkfr.mongodb.net/',
+    MONGOSDB_URI: 'mongodb+srv://coderbackend:coderbackend@clustercode.eoywkfr.mongodb.net/',
 };
 
 export default config
