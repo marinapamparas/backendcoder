@@ -1,0 +1,73 @@
+
+
+
+<div>
+    <h1>CHAT</h1>
+    <div>
+
+        <input type="text" id="chat" name="chat" placeholder="Ingresar mensaje" style="width:300px;">
+        <br />
+
+        <button onClick="sendMessage()">Enviar</button>
+    </div>
+    <div>
+        <p id="chatList"></p>
+    </div>
+
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script> 
+{{!-- si usamos el script cdn para crear clientes, tenemos que indicarle a que puerto conectarse, asique creariamos un cons wsServer = 'ws://localhost:5000' y eso se lo pasariamos al io(wsServer) para que sepa donde crear el cliente --}}
+
+{{!-- con este script agrego sweetalert --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
+
+<script>
+    const socketClient = io();
+    
+    const chat = document.getElementById('chat');
+    
+    const chatList = document.getElementById('chatList');
+   
+
+    let user;
+//obtenemos la info que el cliente publico en el input generando una constante chat que obtenga el elemento por id. Y despues creamos un mensaje para enviar, cuando el valor del input chat sea diferente a vacio. Y emitimos un newMessage cada vez que se clickee el boton enviar
+    
+    socketClient.on('messagesdb', data=> {
+        for (let i = 0; i < data.length; i++){
+            
+        chatList.innerHTML += `<br /> ${data[i].user} : ${data[i].message}`}
+        console.log('data de chat:', data)
+    })
+
+    socketClient.on('messageArrived', data =>{
+        chatList.innerHTML += `<br /> ${data.user} : ${data.message}`;
+    })
+    
+    
+    
+    const sendMessage = () =>{
+        if(chat.value !== ''){
+            socketClient.emit('newMessage', {user: user, message: chat.value})  
+        }
+    }
+
+    const askForUser = () =>{
+        const result = Swal.fire({
+
+            title: 'Ingrese su nombre de usuario',
+            input: 'text',
+            text: 'Usuario',
+            inputValidator: value => { return !value && 'Se debe indicar usuario' },
+            allowOutsideClick: false
+        }).then (result =>{
+            user = result.value;
+        });
+
+        return result.value;
+    }
+    //Flujo principal
+    askForUser();
+    
+</script>

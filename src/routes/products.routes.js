@@ -2,15 +2,14 @@ import { Router } from "express";
 import { ProductManager } from '../dao/ProductManager.js';
 import { uploader } from "../uploader.js";
 import { ProductManagerMongoDb } from "../dao/ProductManagerMongoDb.js";
+import initSocket from '../sockets.js';
 
-//import { socketServer } from './app.js';
-//import initSocket from '../sockets.js';
 
 
 const products = Router();
 //const PME = new ProductManager ("Products.json")
 const PMMDB = new ProductManagerMongoDb()
-//const io = initSocket();
+const io = initSocket();
 
 
 
@@ -93,7 +92,7 @@ products.post('/', uploader.single('thumbnail'), async (req,res)=>{
     try{
         
         // Obtenemos la instancia global del objeto socketServer
-        //const socketServer = req.app.get('socketServer');
+        const socketServer = req.app.get('socketServer');
         
 
         const productData = req.body;
@@ -103,7 +102,7 @@ products.post('/', uploader.single('thumbnail'), async (req,res)=>{
         res.status(200).send({payload: addProduct})
 
         //emito el evento productsChanged
-        //socketServer.emit('productsChanged', 'Se cargo un nuevo producto' );
+        socketServer.emit('productsChanged', 'Se cargo un nuevo producto' );
     
     }catch (error){
         console.error('Error al cargar el producto:', error);
@@ -147,8 +146,10 @@ products.put('/:pid', async (req,res)=>{
         const pid = req.params.pid;
         
         const updateRequest = req.body;
+        
+        const options = {new : true};
 
-        const update = await PMMDB.updateProduct(pid, updateRequest)
+        const update = await PMMDB.updateProduct(pid, updateRequest, options)
 
         res.status(200).send(update)
     
@@ -177,7 +178,7 @@ products.put('/:pid', async (req,res)=>{
 products.delete('/:pid', async (req,res)=>{
     try{
         // Obtenemos la instancia global del objeto socketServer
-        //const socketServer = req.app.get('socketServer');
+        const socketServer = req.app.get('socketServer');
 
         const pid = req.params.pid;
         const productsId = await PMMDB.deleteProduct(pid)

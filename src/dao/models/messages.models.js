@@ -2,15 +2,14 @@ import mongoose from 'mongoose';
 
 mongoose.pluralize(null);
 
-const collection = 'users';
+const collection = 'messages';
+const db = mongoose.connection.useDb('ecommerce')
 
 const schema = new mongoose.Schema({
-    nombre:{ type: String, required: true },
-    email:{ type: String, required: true },
-    password:{ type: String, required: true },
-    role:{ type: String, enum: ['admin', 'premium', 'user'], default: 'user' }
+    user: {type: String, required: true}, 
+    message: {type: String, required: true}
 });
 
-const modelMessages = mongoose.model(collection, schema);
+const modelMessages = db.model(collection, schema);
 
 export default modelMessages;

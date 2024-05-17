@@ -18,7 +18,7 @@ export class ProductManagerMongoDb {
 
     getAllProducts = async() => {
         try {
-            const products = await modelProducts.find();
+            const products = await modelProducts.find().lean();
             return products;
         } catch (error) {
             console.error('Error al obtener los productos:', error);
