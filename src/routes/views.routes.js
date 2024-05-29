@@ -58,4 +58,18 @@ views.get('/chat', async (req,res)=>{
     }
 });
 
+views.get('/products', async (req,res)=>{
+
+    try{
+
+        const productsFile = await PMMDB.getAllProducts()
+        const data = {data : productsFile}
+        res.status(200).render('home', data)
+    
+    }catch (error){
+        console.error('Error al leer el archivo de productos:', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+
 export default views;

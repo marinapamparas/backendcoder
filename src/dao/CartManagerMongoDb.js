@@ -83,15 +83,15 @@ export class CartManagerMongoDb{
 
             if (cartExists) {
                 // Verificar si el producto ya está en el carrito
-                const existingProduct = cartExists.products.find(item => item._id === pid);
-
+                const existingProduct = cartExists.products.find(item => item._id.toString() === pid);
+                
                 if (existingProduct) {
                     // Si el producto ya existe, incrementar la cantidad
                     existingProduct.quantity++;
                     console.log("Quantity incremented to product successfully");
                 } else {
                     // Si el producto no existe, agregarlo al carrito
-                    cartExists.products.push({ quantity: 1 });
+                    cartExists.products.push({ _id: pid, quantity: 1 });
                     console.log("Product added to cart successfully");
                 }
 
