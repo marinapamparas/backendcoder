@@ -16,9 +16,21 @@ export class ProductManagerMongoDb {
 
     }
 
-    getAllProducts = async() => {
+    getAllProducts = async(queryHtml, limitHtml, pageHtml, sortHtml) => {
         try {
-            const products = await modelProducts.find().lean();
+
+            const options = {
+                    limit : limitHtml || 10,
+                    page : pageHtml || 1                    
+                }
+
+                if(sortHtml === -1 || sortHtml === 1){
+                    options.sort = {price: sortHtml}
+                }                
+
+                let queryFilter = JSON.parse(queryHtml) 
+
+            const products = await modelProducts.paginate(queryFilter, options);
             return products;
         } catch (error) {
             console.error('Error al obtener los productos:', error);

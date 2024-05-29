@@ -12,23 +12,17 @@ const PMMDB = new ProductManagerMongoDb()
 const io = initSocket();
 
 
-
-
-
-
-
 products.get('/', async (req,res)=>{
-    try{
-        const productsFile = await PMMDB.getAllProducts()
+    try{                
+        
+        const queryHtml = req.query.query;        
+        const limitHtml = parseInt(req.query.limit);
+        const pageHtml = parseInt(req.query.page);
+        const sortHtml = parseInt(req.query.sort);
+               
+        const productsFile = await PMMDB.getAllProducts(queryHtml, limitHtml, pageHtml, sortHtml);                 
 
-        const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
-
-        let limitedProducts = productsFile;
-        if (limit && !isNaN(limit)) {
-            limitedProducts = limitedProducts.slice(0, limit);
-        }
-
-        res.status(200).send({payload: limitedProducts})
+        res.status(200).send({payload: productsFile})
 
     }catch (error){
         console.error('Error al cargar los productos:', error);

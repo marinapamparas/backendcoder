@@ -52,6 +52,56 @@ carts.post('/:cid/product/:pid', (req,res)=>{
     }
 });
 
+carts.delete('/:cid/product/:pid', (req,res)=>{
+    try{
+        const cid= req.params.cid;
+        const pid= req.params.pid;
+
+        CMMDB.deleteProduct(cid, pid)
+
+        res.status(200).send('Success')
+
+    }catch (error){
+        console.error('Error, the product could not be deleted', error);
+        res.status(500).send('Server error');
+    }
+});
+
+carts.delete('/:cid', (req,res)=>{
+    try{
+        const cid= req.params.cid;
+       
+
+        CMMDB.deleteAllProducts(cid)
+
+        res.status(200).send('Success')
+
+    }catch (error){
+        console.error('Error, the product could not be deleted', error);
+        res.status(500).send('Server error');
+    }
+});
+
+carts.put('/:cid/product/:pid/:qty', async (req,res)=>{
+    try{ 
+        const cid= req.params.cid;
+        const pid= req.params.pid;
+        const qty = req.params.qty;
+
+        const CartsId = await CMMDB.updateProduct(cid, pid, qty)
+        
+        res.status(200).send({payload: CartsId})
+
+    }catch (error){
+        console.error('Error, the cart doesnt exists:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+
+
 
 //ENDPOINTS CON FILE SYSTEM
 // carts.get('/:cid', async (req,res)=>{
