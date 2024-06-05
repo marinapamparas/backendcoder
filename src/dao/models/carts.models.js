@@ -12,6 +12,11 @@ const productSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
+    _user_id: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'users', 
+        required: true 
+    },
     products: [productSchema]
 });
 

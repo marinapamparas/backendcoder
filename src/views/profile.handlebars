@@ -1,0 +1,30 @@
+<style>
+    body {
+        background-color: #ffffff;
+    }
+
+    .letras {
+        color: #000000;
+    }
+    
+</style>
+
+<h1 class="letras">Perfil de usuario {{login_type}}</h1>
+
+<h2 class="letras">Usuario: {{user.name}}, {{user.email}}</h2>
+<h3 class="letras">Rol: {{user.role}}</h3>
+
+
+
+<br>
+
+<form action="/api/views/products" method="get">
+    <button type="submit" class="btn btn-success">Ir a sección de productos</button>
+</form>
+
+<br>
+
+<form action="/api/sessions/logout" method="get">
+    <button type="submit" class="btn btn-success">Salir</button>
+</form>
+

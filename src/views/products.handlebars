@@ -1,4 +1,44 @@
 <div class="container">
+    
+    <div class="row recuadro">
+        {{#if userSession}}
+            
+            <div class="col espacio">
+                <h1 class="letras">Bienvenidx {{userSession.firstName}}</h1>
+            </div>
+            
+            <div class="col espacio">
+
+                <h3 class="letras"> {{userSession.email}}</h2>
+            </div>
+            
+            <div class="col espacio">
+                <form action="/api/sessions/logout" method="get">
+                    <button type="submit" class="btn btn-primary">Salir</button>
+                </form>
+
+            </div>
+            
+
+        {{/if}}
+    </div>
+</div>
+
+<style>
+
+.recuadro{
+    border: solid black;
+    text-align: center;
+    align-items: center;
+}
+.espacio{
+    margin: 2%;
+}
+</style>
+
+
+
+<div class="container">
     <h1 class="mt-4">Listado de productos</h1>
     <div class="row">
         {{#each products}}
@@ -27,3 +67,5 @@
         {{/if}}
     </div>
 </div>
+
+

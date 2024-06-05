@@ -65,7 +65,7 @@ views.get('/products', async (req,res)=>{
         limit: parseInt (req.query.limit) || 5,
         lean: true
     };
-
+    
     const query = {};
 
     try{
@@ -78,8 +78,8 @@ views.get('/products', async (req,res)=>{
             showPrev: options.page > 1,
             showNext: options.page < products.totalPages,
             prevPage: options.page > 1 ? options.page - 1 : null,
-            nextPage: options.page < products.totalPages ? options.page + 1 : null
-
+            nextPage: options.page < products.totalPages ? options.page + 1 : null,
+            userSession: req.session.user
         });
     
     }catch (error){
@@ -105,5 +105,42 @@ views.get('/cart/:cid', async (req,res)=>{
         res.status(500).send('Error del servidor');
     }
 });
+
+
+views.get('/login', async (req,res)=>{
+
+    try{
+        if (req.session.user) return res.redirect('/api/views/products')
+        res.status(200).render('login', {});
+    
+    }catch (error){
+        console.error('Error cargar el chat', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+views.get('/register', async (req,res)=>{
+
+    try{
+        
+        res.status(200).render('register', {});
+    
+    }catch (error){
+        console.error('Error cargar el chat', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+
+views.get('/profile', async (req,res)=>{
+
+    try{
+        if(!req.session.user) return res.redirect('/api/views/login');
+        res.status(200).render('profile', { user: req.session.user });
+    
+    }catch (error){
+        console.error('Error cargar el chat', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+
 
 export default views;

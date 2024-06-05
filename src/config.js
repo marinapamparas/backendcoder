@@ -13,6 +13,7 @@ const config = {
 
     //MONGOSDB_URI: 'mongodb+srv://coderbackend:coderbackend@clustercode.eoywkfr.mongodb.net/',
     MONGOSDB_URI: 'mongodb+srv://coderbackend:coderbackend@clustercode.eoywkfr.mongodb.net/',
+    SECRET: 'coder_Mar_secret',
 };
 
 export default config
