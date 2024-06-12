@@ -11,6 +11,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import sessions from './routes/sessions.routes.js'
 import users from './routes/users.routes.js';
+import passport from 'passport';
 
 
 //Instancio el framework y la clase
@@ -30,6 +31,8 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 //como aplicar handlebars en nuestra app, con estos metodos en app:
 app.engine('handlebars', handlebars.engine());

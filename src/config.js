@@ -14,6 +14,11 @@ const config = {
     //MONGOSDB_URI: 'mongodb+srv://coderbackend:coderbackend@clustercode.eoywkfr.mongodb.net/',
     MONGOSDB_URI: 'mongodb+srv://coderbackend:coderbackend@clustercode.eoywkfr.mongodb.net/',
     SECRET: 'coder_Mar_secret',
+
+    GITHUB_CLIENT_ID: 'Iv23ctgbmXptNKc4qhDl',
+    GITHUB_CLIENT_SECRET: '029f78ec725bc1e627c7776f58a6a4a09821c1bf',
+    GITHUB_CALLBACK_URL: 'http://localhost:8080/api/sessions/ghlogincallback'
+
 };
 
 export default config

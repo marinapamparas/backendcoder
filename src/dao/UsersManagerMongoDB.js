@@ -1,17 +1,13 @@
 import modelUsers from './models/users.model.js';
+import { isValidPassword } from "../utils.js";
 
 
-export class UsersManager {
+class UsersManager {
 
     createUser = async(usersData) =>  {
 
         try {
             
-            if(!usersData.firstName || !usersData.lastName || !usersData.age || !usersData.email || !usersData.password ) {
-                console.error("todos los campos son obligatorios")
-                return;
-            }
-
             const emailVerification = await modelUsers.findOne({ email: usersData.email });
             if(emailVerification){
                 // const fail = {
@@ -21,7 +17,9 @@ export class UsersManager {
                 return;
             }
 
+
             const user = new modelUsers(usersData);
+            console.log('user de usersmanager:', user)
             await user.save();
             return user;
         } catch (error) {
@@ -39,23 +37,30 @@ export class UsersManager {
         }
     }
 
-    autenticationUser = async (email, password) => {
+    autenticationUser = async (username, password) => {
         try {
 
-            const user = await modelUsers.findOne({ email: email });
+            const user = await modelUsers.findOne({ email: username });
 
             if (!user) {
-                console.error('Usuario no encontrado');
+                console.error('Usuario no encontrado en la base de datos');
                 return null;
             }
-
-            if (user.password !== password) {
-                console.error('Contraseña incorrecta');
-                return null;
+            if(password){
+                
+                if (isValidPassword(user, password)){
+                    const userChequeado = user;
+                    return userChequeado;
+                }
+            }else{
+                return user;
             }
+            // if (user.password !== password) {
+            //     console.error('Contraseña incorrecta');
+            //     return null;
+            // }
 
 
-            return user;
         } catch (error) {
             console.error('Error al autenticar el usuario:', error);
         }
@@ -93,4 +98,7 @@ export class UsersManager {
 
 
 
-}
+};
+
+
+export default UsersManager;

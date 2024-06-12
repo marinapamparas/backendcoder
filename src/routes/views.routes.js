@@ -70,7 +70,7 @@ views.get('/products', async (req,res)=>{
 
     try{
         const products = await modelProducts.paginate(query, options);
-
+        console.log('user req', req.session.user)
         res.status(200).render('products', {
             products: products.docs,
             totalPages: products.totalPages,
@@ -79,7 +79,7 @@ views.get('/products', async (req,res)=>{
             showNext: options.page < products.totalPages,
             prevPage: options.page > 1 ? options.page - 1 : null,
             nextPage: options.page < products.totalPages ? options.page + 1 : null,
-            userSession: req.session.user
+            userSession: req.session.user._doc ? req.session.user._doc : req.session.user
         });
     
     }catch (error){
