@@ -39,7 +39,7 @@
     <h1><b>Ecommerce</b></h1>
     <h2><b>Login de usuario</b></h2>
 
-    <form action="/api/sessions/pplogin" method="post" style="margin-top: 32px;">
+    <form action="/api/auth/jwtlogin" method="post" style="margin-top: 32px;">
         <div class="input-group" style="width: 300px; margin-bottom: 32px;">
             <span class="input-group-text" id="group1"><i class="fa-solid fa-user"></i></span>
             <input type="email" name="email" class="form-control" placeholder="Nombre de usuario" required="required" autofocus="autofocus">
@@ -60,7 +60,7 @@
             <button type="submit" class="btn btn-success buttons">Ingresar</button>
             
 
-            <button class="btn btn-success submit_btn buttons" onclick="window.location.replace('/api/sessions/ghlogin')">Ingresa con tu cuenta de Github</button>
+            <button class="btn btn-success submit_btn buttons" onclick="window.location.replace('/api/auth/ghlogin')">Ingresa con tu cuenta de Github</button>
         </div>
 
         <div style="margin-top: 24px;">

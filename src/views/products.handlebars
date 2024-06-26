@@ -1,20 +1,20 @@
 <div class="container">
     
     <div class="row recuadro">
-        {{#if userSession}}
+        {{#if userJWT}}
             
             <div class="col espacio">
-                <h1 class="letras">Bienvenidx {{userSession.firstName}} {{userSession.lastName}}</h1>
+                <h1 class="letras">Bienvenidx {{userJWT.firstName}} {{userJWT.lastName}}</h1>
             </div>
             
             <div class="col espacio">
 
-                <h4 class="letras"> Email: {{userSession.email}}</h4>
-                <h3>Role: {{userSession.role}}</h3>
+                <h4 class="letras"> Email: {{userJWT.email}}</h4>
+                <h3>Role: {{userJWT.role}}</h3>
             </div>
             
             <div class="col espacio">
-                <form action="/api/sessions/logout" method="get">
+                <form action="/api/auth/logout" method="get">
                     <button type="submit" class="btn btn-primary">Salir</button>
                 </form>
 

@@ -3,6 +3,7 @@ import { ProductManager } from '../dao/ProductManager.js';
 import { uploader } from "../uploader.js";
 import { ProductManagerMongoDb } from "../dao/ProductManagerMongoDb.js";
 import initSocket from '../sockets.js';
+import config from "../config.js";
 
 
 
@@ -11,6 +12,15 @@ const products = Router();
 const PMMDB = new ProductManagerMongoDb()
 const io = initSocket();
 
+
+
+products.param('pid', async (req, res, next, pid) => {
+    if (!config.MONGODB_ID_REGEX.test(req.params.pid)) {
+        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    }
+
+    next();
+})
 
 products.get('/', async (req,res)=>{
     try{                
@@ -53,11 +63,12 @@ products.get('/', async (req,res)=>{
 products.get('/:pid', async (req,res)=>{
     
     try{ 
+    
         const pid= req.params.pid;
         const productsId = await PMMDB.getProductById(pid)
         
         res.status(200).send({payload: productsId})
-
+        
     }catch (error){
         console.error('Error, no se encontro el producto:', error);
         res.status(500).send('Error del servidor');
@@ -206,6 +217,10 @@ products.delete('/:pid', async (req,res)=>{
 //         res.status(500).send('Error del servidor');
 //     }
 // });
+
+products.all('*', async(req,res)=>{
+    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada'});
+});
 
 
 

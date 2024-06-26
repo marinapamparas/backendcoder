@@ -19,7 +19,7 @@ class UsersManager {
 
 
             const user = new modelUsers(usersData);
-            console.log('user de usersmanager:', user)
+            
             await user.save();
             return user;
         } catch (error) {

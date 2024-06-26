@@ -1,12 +1,26 @@
 import passport from 'passport';
 import local from 'passport-local';
+import jwt from 'passport-jwt';
 import UsersManager  from "../dao/UsersManagerMongoDB.js";
+import { CartManagerMongoDb } from '../dao/CartManagerMongoDb.js';
 import GitHubStrategy from 'passport-github2';
 import config from '../config.js';
 import { createHash } from '../utils.js';
 
 const localStrategy = local.Strategy;
+const jwtStrategy = jwt.Strategy;
+const jwtExtractor = jwt.ExtractJwt;
 const UMMDB = new UsersManager();
+const CMMDB = new CartManagerMongoDb();
+
+//extractor de cookie porque passport no recupera por si mismo las cookies, es para recuperar el token
+const cookieExtractor = (req) => {
+    let token = null;
+    if (req && req.cookies) token = req.cookies[`${config.APP_NAME}_cookie`];
+    
+    return token;
+}
+
 
 
 const initAuthStrategies = () => {
@@ -36,13 +50,17 @@ const initAuthStrategies = () => {
             try {
 
                 const { firstName, lastName, age } = req.body;
+                
 
+                const newCart = await CMMDB.createCart();
+                
                 const user = {
                     firstName : firstName,
                     lastName : lastName,
                     age : age,
                     email : username,
-                    password : createHash(password)
+                    password : createHash(password),
+                    _cart_id: newCart._id 
                 }
 
                 const foundUser = await UMMDB.createUser(user);
@@ -74,11 +92,12 @@ const initAuthStrategies = () => {
                 
                 const email = profile._json?.email || null;
                 const password = null;
-                console.log('email:', email)
+                
                 
                 if (email) {
                     
                     const foundUser = await UMMDB.autenticationUser( email , password);
+                    
                     if (!foundUser) {
                         const user = {
                             firstName: profile._json.name.split(' ')[0],
@@ -91,13 +110,33 @@ const initAuthStrategies = () => {
 
                         return done(null, process);
                     } else {
-                        return done(null, foundUser);
+                        if (foundUser) {
+                            const { _id, password, ...filteredFoundUser } = foundUser;
+                            return done(null, filteredFoundUser);
+                        }
                     }
                 } else {
                     return done(new Error('Faltan datos de perfil'), null);
                 }
             } catch (err) {
                 return done(err, false);
+            }
+        }
+    ));
+
+
+    // Estrategia para verificación de token vía cookie
+    passport.use('current', new jwtStrategy(
+        {
+            // Aquí llamamos al extractor de cookie
+            jwtFromRequest: jwtExtractor.fromExtractors([cookieExtractor]),
+            secretOrKey: config.SECRET
+        },
+        async (jwt_payload, done) => {
+            try {
+                return done(null, jwt_payload);
+            } catch (err) {
+                return done(err);
             }
         }
     ));
@@ -112,5 +151,19 @@ const initAuthStrategies = () => {
     });
 
 }
+
+
+export const passportCall = strategy => {
+    return async (req, res, next) => {
+        passport.authenticate(strategy, { session: false }, function (err, user, info) {
+            if (err) return next(err);
+            
+            if (!user) return res.status(401).send({ origin: config.SERVER, payload: null, error: 'Usuario no autenticado' });
+
+            req.user = user;
+            next();
+        })(req, res, next);
+    }
+};
 
 export default initAuthStrategies;

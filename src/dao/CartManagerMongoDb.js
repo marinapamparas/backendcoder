@@ -10,10 +10,11 @@ export class CartManagerMongoDb{
     createCart = async() => {
         try {
             const cart = new modelCarts();
+            
             await cart.save();
             return cart;
         } catch (error) {
-            console.error('Error al crear el producto:', error);
+            console.error('Error al crear el carrito:', error);
         }
     }
 
@@ -208,7 +209,7 @@ export class CartManagerMongoDb{
         try {
             const cart = await modelCarts
             .findById(cartId)
-            .populate({path: 'products._id', model: modelProducts});
+            // .populate({path: 'products._id', model: modelProducts}); - ya lo tengo automatizado en modelcarts
             return cart;
         } catch (error) {
             console.error('Error al obtener el carrito por ID:', error);

@@ -9,8 +9,9 @@ import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
-import sessions from './routes/sessions.routes.js'
+import auth from './routes/auth.routes.js'
 import users from './routes/users.routes.js';
+import TestRouter from './routes/test.routes.js';
 import passport from 'passport';
 
 
@@ -44,7 +45,9 @@ app.use('/api/products', products);
 app.use('/api/carts', carts);
 app.use('/api/views', views);
 app.use('/api/users', users);
-app.use('/api/sessions', sessions);
+app.use('/api/auth', auth);
+
+app.use('/api/test', new TestRouter().getRouter());
 //la parte estatica que se muestra:
 // app.use('/', express.static('src/public'));
 
