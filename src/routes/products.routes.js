@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { ProductManager } from '../dao/ProductManager.js';
-import { uploader } from "../uploader.js";
-import { ProductManagerMongoDb } from "../dao/ProductManagerMongoDb.js";
-import initSocket from '../sockets.js';
+import { ProductManager } from '../controllers/ProductManager.js';
+import { uploader } from "../services/uploader.js";
+import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
+import initSocket from '../services/sockets.js';
 import config from "../config.js";
 
 

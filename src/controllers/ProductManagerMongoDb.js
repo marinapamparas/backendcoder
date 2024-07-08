@@ -1,5 +1,5 @@
 
-import modelProducts from './models/products.models.js';
+import modelProducts from '../models/products.models.js';
 
 
 export class ProductManagerMongoDb {
@@ -21,7 +21,7 @@ export class ProductManagerMongoDb {
             
             // Set options based on arguments
 
-        const options = {
+            const options = {
 
             limit: limitHtml || 10,
             
@@ -33,9 +33,10 @@ export class ProductManagerMongoDb {
             
             if (!queryHtml || queryHtml.trim() ==='') {
             
-            console.warn("queryHtml is undefined or empty, returning all products.");
+            const products = await modelProducts.paginate({}, options);
             
-            return modelProducts.paginate({}, options); // Find all products if queryHtml is invalid
+            return products;
+            // return await modelProducts.paginate({}, options); // Find all products if queryHtml is invalid
             
             }
             
@@ -66,7 +67,7 @@ export class ProductManagerMongoDb {
             //Recuperar productos utilizando paginación y filtro de búsqueda
             
             const products = await modelProducts.paginate(queryFilter, options);
-            
+            console.log('products:', products)
             return products;
             
             } catch (error) {

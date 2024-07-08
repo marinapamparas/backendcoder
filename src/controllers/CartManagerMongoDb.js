@@ -1,6 +1,6 @@
 import products from "../routes/products.routes.js";
-import modelCarts from "./models/carts.models.js";
-import modelProducts from "./models/products.models.js";
+import modelCarts from "../models/carts.models.js";
+import modelProducts from "../models/products.models.js";
 
 
 export class CartManagerMongoDb{

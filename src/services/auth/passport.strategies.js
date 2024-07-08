@@ -1,11 +1,12 @@
 import passport from 'passport';
 import local from 'passport-local';
 import jwt from 'passport-jwt';
-import UsersManager  from "../dao/UsersManagerMongoDB.js";
-import { CartManagerMongoDb } from '../dao/CartManagerMongoDb.js';
+import UsersManager from '../../controllers/UsersManagerMongoDB.js';
+import { CartManagerMongoDb } from '../../controllers/CartManagerMongoDb.js';
 import GitHubStrategy from 'passport-github2';
-import config from '../config.js';
+import config from '../../config.js';
 import { createHash } from '../utils.js';
+
 
 const localStrategy = local.Strategy;
 const jwtStrategy = jwt.Strategy;
@@ -90,10 +91,32 @@ const initAuthStrategies = () => {
         async (req, accessToken, refreshToken, profile, done) => {
             try {
                 
-                const email = profile._json?.email || null;
+                
+        
+                        
+        
+                        
+
+                const emailsList = profile.emails || null;
+                let email = profile._json?.email || null;
                 const password = null;
                 
-                
+                if (!emailsList && !email) {
+        
+                    const response = await fetch('https://api.github.com/user/emails', {
+
+                        headers: {
+
+                            'Authorization': `token ${accessToken}`,
+
+                            'User-Agent': config.APP_NAME
+
+                        }
+
+                    });
+                    const emails = await response.json();
+                    email = emails.filter(email => email.verified).map(email => ({ value: email.email }));
+                }
                 if (email) {
                     
                     const foundUser = await UMMDB.autenticationUser( email , password);
@@ -116,7 +139,7 @@ const initAuthStrategies = () => {
                         }
                     }
                 } else {
-                    return done(new Error('Faltan datos de perfil'), null);
+                    return done(new Error('Faltan datos de perfil, email no publico'), null);
                 }
             } catch (err) {
                 return done(err, false);

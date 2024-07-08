@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import  UsersManager  from "../dao/UsersManagerMongoDB.js";
+import  UsersManager  from "../controllers/UsersManagerMongoDB.js";
 
 
 const users = Router();

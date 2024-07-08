@@ -1,5 +1,5 @@
-import modelUsers from './models/users.model.js';
-import { isValidPassword } from "../utils.js";
+import modelUsers from '../models/users.model.js';
+import { isValidPassword } from "../services/utils.js";
 
 
 class UsersManager {

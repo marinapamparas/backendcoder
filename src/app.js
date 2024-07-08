@@ -4,7 +4,7 @@ import products from './routes/products.routes.js';
 import carts from './routes/carts.routes.js';
 import views from './routes/views.routes.js'
 import handlebars from "express-handlebars";
-import initSocket from './sockets.js';
+import initSocket from './services/sockets.js';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
@@ -13,6 +13,8 @@ import auth from './routes/auth.routes.js'
 import users from './routes/users.routes.js';
 import TestRouter from './routes/test.routes.js';
 import passport from 'passport';
+import MongoSingleton from './services/mongo.singleton.js';
+import cors from 'cors';
 
 
 //Instancio el framework y la clase
@@ -25,7 +27,7 @@ app.use(cookieParser(config.SECRET));
 app.use(session({
     //store: new fileStorage({path:'./sessions', ttl:100, retries:0}),
     store: MongoStore.create({
-        mongoUrl: config.MONGOSDB_URI,
+        mongoUrl: config.MONGODB_URI,
         ttl: 600
     }),
     secret: config.SECRET,
@@ -34,6 +36,11 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+//politica de cors abierto
+app.use(cors({
+    origin: '*'
+}));
 
 //como aplicar handlebars en nuestra app, con estos metodos en app:
 app.engine('handlebars', handlebars.engine());
@@ -56,8 +63,10 @@ app.use('/api/test', new TestRouter().getRouter());
 //Escucha Http
 const expressInstance = app.listen(config.PORT, async () => {
 
-    await mongoose.connect(config.MONGOSDB_URI);
-    console.log(`Servidor activo en puerto ${config.PORT} enlazada a bbdd`)
+    // await mongoose.connect(config.MONGODB_URI);
+    MongoSingleton.getInstance();
+    console.log(`Servidor activo en puerto ${config.PORT} PID ${process.pid} enlazada a bbdd ${config.MONGODB_URI}`)
+    
 });
 
 //Escucha Socket

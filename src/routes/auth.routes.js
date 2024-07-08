@@ -1,9 +1,9 @@
 import { Router } from "express";
 import config from "../config.js";
-import UsersManager from "../dao/UsersManagerMongoDB.js";
+import UsersManager from "../controllers/UsersManagerMongoDB.js";
 import session from "express-session";
-import { createHash, verifyRequiredBody, createToken, verifyToken } from "../utils.js";
-import initAuthStrategies, { passportCall } from "../auth/passport.strategies.js";
+import { createHash, verifyRequiredBody, createToken, verifyToken } from "../services/utils.js";
+import initAuthStrategies, { passportCall } from "../services/auth/passport.strategies.js";
 import passport from "passport";
 
 

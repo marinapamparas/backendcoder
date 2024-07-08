@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import config from './config.js';
+import config from '../config.js';
 
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));

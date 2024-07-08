@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { ProductManager } from '../dao/ProductManager.js';
-import  initSocket  from '../sockets.js';
-import { ProductManagerMongoDb } from "../dao/ProductManagerMongoDb.js";
-
-import { CartManagerMongoDb } from "../dao/CartManagerMongoDb.js";
-import modelProducts from '../dao/models/products.models.js';
+//import { ProductManager } from '../dao/ProductManager.js';
+import  initSocket  from '../services/sockets.js';
+import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
+import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
+import modelProducts from '../models/products.models.js';
+import products from "./products.routes.js";
 
 
 const views = Router();
@@ -24,7 +24,9 @@ views.get('/', async (req,res)=>{
     try{
 
         const productsFile = await PMMDB.getAllProducts()
-        const data = {data : productsFile}
+        const productsList = JSON.parse(JSON.stringify(productsFile.docs));
+       
+        const data = {data : productsList}
         res.status(200).render('home', data)
     
     }catch (error){
@@ -36,8 +38,9 @@ views.get('/', async (req,res)=>{
 views.get('/realtimeproducts', async (req,res)=>{
     try{        
         const productsFile = await PMMDB.getAllProducts()
-        const data = {data : productsFile}
-
+        
+        const productsList = JSON.parse(JSON.stringify(productsFile.docs));
+        const data = {data : productsList}
         res.status(200).render('realtimeproducts', data)
 
     }catch (error){

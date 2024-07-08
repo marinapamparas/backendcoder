@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { MessagesManager } from './dao/MessagesManager.js';
+import { MessagesManager } from '../controllers/MessagesManager.js';
 
 
 const MMMDB = new MessagesManager()
