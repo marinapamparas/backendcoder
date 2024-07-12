@@ -1,41 +1,56 @@
-import modelUsers from '../models/users.model.js';
-import { isValidPassword } from "../services/utils.js";
+import modelUsers from '../../models/users.model.js'
+import { isValidPassword } from "../utils.js";
+//import { CartManagerMongoDb } from '../controllers/CartManagerMongoDb.js';
+import CartsManager from '../../controllers/carts.manager.js';
+import { createHash } from '../utils.js';
 
 
-class UsersManager {
+const CMMDB = new CartsManager();
 
-    createUser = async(usersData) =>  {
+class UsersService {
+    constructor() {
+    }
 
+
+    add = async (newData) => {
         try {
             
-            const emailVerification = await modelUsers.findOne({ email: usersData.email });
+            const emailVerification = await modelUsers.findOne({ email: newData.email });
+            
             if(emailVerification){
-                // const fail = {
-                //     message : 'El mail que ingresaste ya se encuentra registrado'
-                // }
                 console.log('El mail ya esta registrado')
                 return;
             }
-
-
-            const user = new modelUsers(usersData);
             
-            await user.save();
-            return user;
+            const newCart = await CMMDB.add();
+
+            const user = {
+                firstName : newData.firstName,
+                lastName : newData.lastName,
+                age : newData.age,
+                email : newData.email,
+                password : createHash(newData.password),
+                _cart_id: newCart._id 
+            }
+
+            const newUser = new modelUsers(user);
+
+            await newUser.save();
+            return newUser;
+
         } catch (error) {
             console.error('Error al crear el user:', error);
         }
-
-    }
-
-    getUserById = async (userId) => {
+    };
+    
+    getOne = async (filter) => {
         try {
-            const user = await modelUsers.findById(userId);
+            const user = await modelUsers.findById(filter);
             return user;
         } catch (error) {
             console.error('Error al obtener el user por ID:', error);
         }
-    }
+    };
 
     autenticationUser = async (username, password) => {
         try {
@@ -55,50 +70,39 @@ class UsersManager {
             }else{
                 return user;
             }
-            // if (user.password !== password) {
-            //     console.error('Contraseña incorrecta');
-            //     return null;
-            // }
-
-
+      
         } catch (error) {
             console.error('Error al autenticar el usuario:', error);
         }
-    }
+    };
 
-
-    getAllUsers = async() => {
+    getAll = async() => {
         try {
             const user = await modelUsers.find().lean();
             return user;
         } catch (error) {
             console.error('Error al obtener los usuarios:', error);
         }
-    }
+    };
 
-    updateUser = async (userId, updates) => {
+    update = async (userId, updates) => {
         try {
             const user = await modelUsers.findByIdAndUpdate(userId, updates, { new: true });
             return user;
         } catch (error) {
             console.error('Error al actualizar el user:', error);
         }
-    }
+    };
 
-    deleteUser = async (userId) => {
+    delete = async (filter) => {
         try {
-            await modelUsers.findByIdAndDelete(userId);
+            await modelUsers.findByIdAndDelete(filter);
             console.log('Usuario eliminado correctamente');
         } catch (error) {
             console.error('Error al eliminar el usuario:', error);
         }
-    }
+    };
 
+}
 
-
-
-
-};
-
-
-export default UsersManager;
+export default UsersService;

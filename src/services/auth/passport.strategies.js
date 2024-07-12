@@ -1,8 +1,10 @@
 import passport from 'passport';
 import local from 'passport-local';
 import jwt from 'passport-jwt';
-import UsersManager from '../../controllers/UsersManagerMongoDB.js';
-import { CartManagerMongoDb } from '../../controllers/CartManagerMongoDb.js';
+//import UsersManager from '../../controllers/UsersManagerMongoDB.js';
+import UsersManager from '../../controllers/users.manager.js';
+import CartsManager from '../../controllers/carts.manager.js';
+//import { CartManagerMongoDb } from '../../controllers/CartManagerMongoDb.js';
 import GitHubStrategy from 'passport-github2';
 import config from '../../config.js';
 import { createHash } from '../utils.js';
@@ -12,7 +14,7 @@ const localStrategy = local.Strategy;
 const jwtStrategy = jwt.Strategy;
 const jwtExtractor = jwt.ExtractJwt;
 const UMMDB = new UsersManager();
-const CMMDB = new CartManagerMongoDb();
+const CMMDB = new CartsManager();
 
 //extractor de cookie porque passport no recupera por si mismo las cookies, es para recuperar el token
 const cookieExtractor = (req) => {
@@ -53,7 +55,7 @@ const initAuthStrategies = () => {
                 const { firstName, lastName, age } = req.body;
                 
 
-                const newCart = await CMMDB.createCart();
+                const newCart = await CMMDB.add();
                 
                 const user = {
                     firstName : firstName,
@@ -64,11 +66,10 @@ const initAuthStrategies = () => {
                     _cart_id: newCart._id 
                 }
 
-                const foundUser = await UMMDB.createUser(user);
+                const foundUser = await UMMDB.add(user);
 
                 if (foundUser) {
                     const { password, ...filteredFoundUser } = foundUser;
-                    console.log('filteredFoundUser en passport', filteredFoundUser)
                     return done(null, filteredFoundUser);
                 } else {
                     return done(null, false);
@@ -91,12 +92,6 @@ const initAuthStrategies = () => {
         async (req, accessToken, refreshToken, profile, done) => {
             try {
                 
-                
-        
-                        
-        
-                        
-
                 const emailsList = profile.emails || null;
                 let email = profile._json?.email || null;
                 const password = null;
@@ -129,7 +124,7 @@ const initAuthStrategies = () => {
                             password: 'none'
                         }
 
-                        const process = await UMMDB.createUser(user);
+                        const process = await UMMDB.add(user);
 
                         return done(null, process);
                     } else {

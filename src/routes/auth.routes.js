@@ -1,6 +1,7 @@
 import { Router } from "express";
 import config from "../config.js";
-import UsersManager from "../controllers/UsersManagerMongoDB.js";
+//import UsersManager from "../controllers/UsersManagerMongoDB.js";
+import UsersManager from "../controllers/users.manager.js";
 import session from "express-session";
 import { createHash, verifyRequiredBody, createToken, verifyToken } from "../services/utils.js";
 import initAuthStrategies, { passportCall } from "../services/auth/passport.strategies.js";
@@ -230,11 +231,6 @@ auth.get('/ppprivate', passportCall('jwtlogin'), handlePolicies (['ADMIN', 'PREM
 auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'password']),passport.authenticate('register', { failureRedirect: `http://localhost:8080/api/views/register?error=${encodeURI('No se pudo hacer el registro exitosamente')}`}), async (req, res) => {
     try{
  
-        // const token = createToken(req.user, '1h');
-        
-        // // Notificamos al navegador para que almacene el token en una cookie
-        // res.cookie(`${config.APP_NAME}_cookie`, token, { maxAge: 60 * 60 * 1000, httpOnly: true });
-        
         res.redirect('/api/views/login');
 
     

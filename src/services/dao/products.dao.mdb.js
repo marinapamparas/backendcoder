@@ -1,22 +1,19 @@
+import modelProducts from '../../models/products.models.js';
 
-import modelProducts from '../models/products.models.js';
-
-
-export class ProductManagerMongoDb {
-
-    createProduct = async(productData) =>  {
-
-        try {
-            const product = new modelProducts(productData);
-            await product.save();
-            return product;
-        } catch (error) {
-            console.error('Error al crear el producto:', error);
-        }
-
+class ProductsService {
+    constructor() {
     }
 
-    getAllProducts = async(queryHtml, limitHtml, pageHtml, sortHtml) => {
+    getOne = async (filter) => {
+        try {
+            const product = await modelProducts.findById(filter);
+            return product;
+        } catch (error) {
+            console.error('Error al obtener el producto por ID:', error);
+        }
+    };
+
+    getPaginated = async (queryHtml, limitHtml, pageHtml, sortHtml) => {
         try {
             
             // Set options based on arguments
@@ -31,7 +28,7 @@ export class ProductManagerMongoDb {
             
             // Check if queryHtml is defined and not empty
             
-            if (!queryHtml || queryHtml.trim() ==='') {
+            if (!queryHtml || queryHtml.trim() === '') {
             
             const products = await modelProducts.paginate({}, options);
             
@@ -40,13 +37,13 @@ export class ProductManagerMongoDb {
             
             }
             
-            // Valida formato queryHtml
+            // // Valida formato queryHtml
             
             if (validateQueryHtmlFormat && !validateQueryHtmlFormat(queryHtml)) {
             
             console.error('Invalid queryHtml format');
             
-            // en caso de no ser valido el formato
+            //en caso de no ser valido el formato
             
             return;
             
@@ -70,7 +67,7 @@ export class ProductManagerMongoDb {
             console.log('products:', products)
             return products;
             
-            } catch (error) {
+        } catch (error) {
             
             console.error('Error al obtener los productos:', error);
             
@@ -82,57 +79,38 @@ export class ProductManagerMongoDb {
             
             return { error: error.message };
             
-            }
+        }
             
-            };
-    //         const options = {
-    //                 limit : limitHtml || 10,
-    //                 page : pageHtml || 1                    
-    //             }
+    };
+    
 
-    //             if(sortHtml === -1 || sortHtml === 1){
-    //                 options.sort = {price: sortHtml}
-    //             }                
-
-    //             let queryFilter = JSON.parse(queryHtml) 
-
-    //         const products = await modelProducts.paginate(queryFilter, options);
-    //         return products;
-    //     } catch (error) {
-    //         console.error('Error al obtener los productos:', error);
-    //     }
-    // }
-
-    getProductById = async (productId) => {
+    add = async (newData) => {
         try {
-            const product = await modelProducts.findById(productId);
+            const product = new modelProducts(newData);
+            await product.save();
             return product;
         } catch (error) {
-            console.error('Error al obtener el producto por ID:', error);
+            console.error('Error al crear el producto:', error);
         }
-    }
-    
-    updateProduct = async (productId, updates) => {
+    };
+
+    update = async (productId, updates, options) => {
         try {
-            const product = await modelProducts.findByIdAndUpdate(productId, updates, { new: true });
+            const product = await modelProducts.findByIdAndUpdate(productId, updates, options);
             return product;
         } catch (error) {
             console.error('Error al actualizar el producto:', error);
         }
-    }
+    };
 
-    deleteProduct = async (productId) => {
+    delete = async (filter) => {
         try {
-            await modelProducts.findByIdAndDelete(productId);
+            await modelProducts.findByIdAndDelete(filter);
             console.log('Producto eliminado correctamente');
         } catch (error) {
             console.error('Error al eliminar el producto:', error);
         }
-    }
-
-
-
-
-
-
+    };
 }
+
+export default ProductsService;

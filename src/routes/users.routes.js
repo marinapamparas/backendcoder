@@ -1,7 +1,7 @@
 import { Router } from "express";
 
-import  UsersManager  from "../controllers/UsersManagerMongoDB.js";
-
+//import  UsersManager  from "../controllers/UsersManagerMongoDB.js";
+import UsersManager from "../controllers/users.manager.js";
 
 const users = Router();
 
@@ -9,16 +9,16 @@ const UMMDB = new UsersManager ()
 
 
 
-users.get('/:cid', async (req,res)=>{
+users.get('/:uid', async (req,res)=>{
     try{ 
-        const cid= req.params.cid;
+        const uid= req.params.uid;
         
-        const CartsId = await CMMDB.getCartById(cid)
+        const UserId = await UMMDB.getOne(uid)
         
-        res.status(200).send({payload: CartsId})
+        res.status(200).send({payload: UserId})
 
     }catch (error){
-        console.error('Error, the cart doesnt exists:', error);
+        console.error('Error, the user doesnt exists:', error);
         res.status(500).send('Server error');
     }
 });
@@ -29,7 +29,7 @@ users.post('/createUser', async (req,res)=>{
 
         const userData = req.body;
 
-        const addUser = await UMMDB.createUser(userData)           
+        const addUser = await UMMDB.add(userData)           
 
         res.status(200).send({payload: addUser})
 

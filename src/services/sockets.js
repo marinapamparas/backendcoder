@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
-import { MessagesManager } from '../controllers/MessagesManager.js';
+//import { MessagesManager } from '../controllers/MessagesManager.js';
+import MessagesManager from '../controllers/messages.manager.js';
 
 
 const MMMDB = new MessagesManager()
@@ -13,7 +14,7 @@ const initSocket = (httpServer) => {
     //Creo cliente y lo conecto al server
     io.on('connection', async socket => {  
         
-        let messages = await MMMDB.getAllMessages();
+        let messages = await MMMDB.getAll();
 
         // console.log ('messages:', messages)
         socket.emit('messagesdb', messages);
@@ -24,7 +25,7 @@ const initSocket = (httpServer) => {
         socket.on('newMessage', data =>{
             
             
-            MMDB.saveMessage(data)
+            MMDB.add(data)
             //MMDB.deleteAllMessages()
             console.log(`Mensaje recibido desde ${socket.id}: ${data.user} : ${data.message}`)
             

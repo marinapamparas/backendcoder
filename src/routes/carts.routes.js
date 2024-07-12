@@ -1,11 +1,12 @@
 import { Router } from "express";
 //import { CartManager } from "../dao/CartManager.js";
-import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
+//import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
+import CartsManager from '../controllers/carts.manager.js';
 
 
 const carts = Router();
 // const CME = new CartManager ("Carts.json")
-const CMMDB = new CartManagerMongoDb ()
+const CMMDB = new CartsManager ()
 
 
 
@@ -13,7 +14,7 @@ carts.get('/:cid', async (req,res)=>{
     try{ 
         const cid= req.params.cid;
         
-        const CartsId = await CMMDB.getCartById(cid)
+        const CartsId = await CMMDB.getOne(cid)
         
         res.status(200).send({payload: CartsId})
 
@@ -26,7 +27,7 @@ carts.get('/:cid', async (req,res)=>{
 
 carts.post('/', async (req,res)=>{
     try{
-        await CMMDB.createCart()
+        await CMMDB.add()
 
         res.status(200).send('The cart has been created succesfully')
 

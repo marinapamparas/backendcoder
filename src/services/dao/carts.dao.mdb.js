@@ -1,13 +1,11 @@
-import products from "../routes/products.routes.js";
-import modelCarts from "../models/carts.models.js";
-import modelProducts from "../models/products.models.js";
+import modelCarts from "../../models/carts.models.js";
 
 
-export class CartManagerMongoDb{
-    
+class CartsService {
+    constructor() {
+    }
 
-
-    createCart = async() => {
+    add = async() => {
         try {
             const cart = new modelCarts();
             
@@ -17,55 +15,6 @@ export class CartManagerMongoDb{
             console.error('Error al crear el carrito:', error);
         }
     }
-
-
-
-    // addProduct = async(cid, pid) =>  {
-    //     //validaciones
-    //     if (!cid || !pid) {
-    //         console.error("All fields are mandatory");
-    //         return;
-    //     }
-    //     if(cid < 0 || pid < 0){
-    //         console.error("The id is not valid")
-    //         return;
-    //     }
-
-    //     const cartExists = await this.getCartById(cid) 
-
-    //     if (cartExists !== undefined){
-            
-    //         if (cartExists.products !== undefined && cartExists.products !== null && cartExists.products.length > 0){
-                
-    //             const existingProduct = await cartExists.products.findById(pid);
-
-    //             if (existingProduct) {
-                
-    //                 const updateProduct = {
-    //                     quantity: quantity++
-    //                 };
-    //                 existingProduct.updateOne(pid, updateProduct)
-
-    //             }else {
-                    
-    //                 const newProduct = {
-    //                     id: pid,
-    //                     quantity: 1
-    //                 };
-    //                 cartExists.insertOne(newProduct);
-    //             }
-    //         }else{
-    //             const newProduct = {
-    //                 id: pid,
-    //                 quantity: 1
-    //             };
-    //             await cartExists.insertOne(newProduct);
-    //         }
-
-    //     }else{
-    //         console.log ('The cart doesnt exist')
-    //     }
-    // }
 
     addProduct = async (cid, pid) => {
         // Validaciones
@@ -104,7 +53,7 @@ export class CartManagerMongoDb{
         } catch (error) {
             console.error('Error adding product to cart:', error);
         }
-    }
+    };
 
     updateProduct = async (cid, pid, qty) => {
         // Validaciones
@@ -143,7 +92,6 @@ export class CartManagerMongoDb{
             console.error('Error updating quantity of product:', error);
         }
     }
-
 
     deleteProduct = async (cid, pid) => {
         // Validaciones
@@ -205,7 +153,7 @@ export class CartManagerMongoDb{
         }
     }
 
-    getCartById = async(cartId) =>{
+    getOne = async(cartId) =>{
         try {
             const cart = await modelCarts
             .findById(cartId)
@@ -215,7 +163,7 @@ export class CartManagerMongoDb{
             console.error('Error al obtener el carrito por ID:', error);
         }
     }
-    
-
 
 }
+
+export default CartsService;

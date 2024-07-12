@@ -1,16 +1,13 @@
 import { Router } from "express";
-//import { ProductManager } from '../dao/ProductManager.js';
 import  initSocket  from '../services/sockets.js';
-import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
-import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
-import modelProducts from '../models/products.models.js';
-import products from "./products.routes.js";
+import ProductsManager from "../controllers/products.manager.js";
+//import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
+import CartsManager from "../controllers/carts.manager.js";
 
 
 const views = Router();
-//const PME = new ProductManager ("Products.json")
-const PMMDB = new ProductManagerMongoDb()
-const CMMDB = new CartManagerMongoDb ()
+const PMMDB = new ProductsManager()
+const CMMDB = new CartsManager ()
 
 
 const socket = initSocket();
@@ -23,7 +20,7 @@ views.get('/', async (req,res)=>{
 
     try{
 
-        const productsFile = await PMMDB.getAllProducts()
+        const productsFile = await PMMDB.getPaginated()
         const productsList = JSON.parse(JSON.stringify(productsFile.docs));
        
         const data = {data : productsList}
@@ -37,7 +34,7 @@ views.get('/', async (req,res)=>{
 
 views.get('/realtimeproducts', async (req,res)=>{
     try{        
-        const productsFile = await PMMDB.getAllProducts()
+        const productsFile = await PMMDB.getPaginated()
         
         const productsList = JSON.parse(JSON.stringify(productsFile.docs));
         const data = {data : productsList}
@@ -63,25 +60,24 @@ views.get('/chat', async (req,res)=>{
 
 views.get('/products', async (req,res)=>{
 
-    const options = {
-        page: parseInt(req.query.page) || 1,
-        limit: parseInt (req.query.limit) || 5,
-        lean: true
-    };
-    
-    const query = {};
+  
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt (req.query.limit) || 5;
+    const sort = 1;
+    const query = "";
 
     try{
-        const products = await modelProducts.paginate(query, options);
-       
+        
+        const products = await PMMDB.getPaginated(query, limit, page, sort);
+        const productsString = JSON.parse(JSON.stringify(products));
         res.status(200).render('products', {
-            products: products.docs,
-            totalPages: products.totalPages,
-            currentPage: options.page,
-            showPrev: options.page > 1,
-            showNext: options.page < products.totalPages,
-            prevPage: options.page > 1 ? options.page - 1 : null,
-            nextPage: options.page < products.totalPages ? options.page + 1 : null,
+            products: productsString.docs,
+            totalPages: productsString.totalPages,
+            currentPage: page,
+            showPrev: page > 1,
+            showNext: page < productsString.totalPages,
+            prevPage: page > 1 ? page - 1 : null,
+            nextPage: page < productsString.totalPages ? page + 1 : null,
             userJWT: req.user._doc ? req.user._doc : req.user
         });
     
@@ -97,7 +93,7 @@ views.get('/cart/:cid', async (req,res)=>{
     try{
           
         const cid = req.params.cid;
-        let cartProducts = await CMMDB.getCartById(cid);
+        let cartProducts = await CMMDB.getOne(cid);
         cartProducts = JSON.parse(JSON.stringify(cartProducts)); // Elimina propiedades del prototipo porque sino handlebars por seguridad no las muestra
         const data = { cart: cartProducts };
         res.status(200).render('cart', data);
@@ -113,7 +109,7 @@ views.get('/cart/:cid', async (req,res)=>{
 views.get('/login', async (req,res)=>{
 
     try{
-        if (req.session.user) return res.redirect('/api/views/products')
+        if (req.user) return res.redirect('/api/views/products')
         res.status(200).render('login', {});
     
     }catch (error){
@@ -136,8 +132,8 @@ views.get('/register', async (req,res)=>{
 views.get('/profile', async (req,res)=>{
 
     try{
-        if(!req.session.user) return res.redirect('/api/views/login');
-        res.status(200).render('profile', { user: req.session.user });
+        if(!req.user) return res.redirect('/api/views/login');
+        res.status(200).render('profile', { user: req.user });
     
     }catch (error){
         console.error('Error cargar el chat', error);

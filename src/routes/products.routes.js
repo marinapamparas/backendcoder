@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { ProductManager } from '../controllers/ProductManager.js';
 import { uploader } from "../services/uploader.js";
-import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
+import ProductsManager from "../controllers/products.manager.js";
+//import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
 import config from "../config.js";
 
@@ -9,7 +10,7 @@ import config from "../config.js";
 
 const products = Router();
 //const PME = new ProductManager ("Products.json")
-const PMMDB = new ProductManagerMongoDb()
+const PMMDB = new ProductsManager()
 const io = initSocket();
 
 
@@ -30,7 +31,7 @@ products.get('/', async (req,res)=>{
         const pageHtml = parseInt(req.query.page);
         const sortHtml = parseInt(req.query.sort);
                
-        const productsFile = await PMMDB.getAllProducts(queryHtml, limitHtml, pageHtml, sortHtml);                 
+        const productsFile = await PMMDB.getPaginated(queryHtml, limitHtml, pageHtml, sortHtml);                 
 
         res.status(200).send({payload: productsFile})
 
@@ -65,7 +66,7 @@ products.get('/:pid', async (req,res)=>{
     try{ 
     
         const pid= req.params.pid;
-        const productsId = await PMMDB.getProductById(pid)
+        const productsId = await PMMDB.getOne(pid)
         
         res.status(200).send({payload: productsId})
         
@@ -102,7 +103,7 @@ products.post('/', uploader.single('thumbnail'), async (req,res)=>{
 
         const productData = req.body;
 
-        const addProduct = await PMMDB.createProduct(productData)           
+        const addProduct = await PMMDB.add(productData)           
 
         res.status(200).send({payload: addProduct})
 
@@ -154,7 +155,7 @@ products.put('/:pid', async (req,res)=>{
         
         const options = {new : true};
 
-        const update = await PMMDB.updateProduct(pid, updateRequest, options)
+        const update = await PMMDB.update(pid, updateRequest, options)
 
         res.status(200).send(update)
     
@@ -186,7 +187,7 @@ products.delete('/:pid', async (req,res)=>{
         const socketServer = req.app.get('socketServer');
 
         const pid = req.params.pid;
-        const productsId = await PMMDB.deleteProduct(pid)
+        const productsId = await PMMDB.delete(pid)
         res.status(200).send({payload: productsId})
 
         //emito el evento productsChanged

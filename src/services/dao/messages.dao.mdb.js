@@ -1,9 +1,11 @@
-import modelMessages from "../models/messages.models.js";
+import modelMessages from "../../models/messages.models.js";
+
+class MessagesService {
+    constructor() {
+    }
 
 
-export class MessagesManager{
-    
-    saveMessage = async(messageData) =>  {
+    add = async(messageData) =>  {
 
         try {
             const message = new modelMessages(messageData);
@@ -15,7 +17,7 @@ export class MessagesManager{
 
     }
 
-    getAllMessages = async() => {
+    getAll = async() => {
         try {
             const messages = await modelMessages.find().lean();
             return messages;
@@ -24,7 +26,7 @@ export class MessagesManager{
         }
     }
 
-    deleteAllMessages = async () =>{
+    deleteAll = async () =>{
         try{
             const messagesErased = await modelMessages.deleteMany()
             return messagesErased
@@ -32,5 +34,7 @@ export class MessagesManager{
             console.error('Error al borrar todos los mensajes:', error)
         }
     }
-    
+
 }
+
+export default MessagesService;
