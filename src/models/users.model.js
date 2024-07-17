@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
     age: { type: Number, required: true },
     password: { type: String, required: true},
     _cart_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'carts' },
-    role: { type: String, enum: ['admin', 'premium', 'user'], default: 'user'}
+    role: { type: String, enum: ['ADMIN', 'PREMIUM', 'USER'], default: 'USER'}
 });
 
 // Middleware de preconsulta para find y findOne

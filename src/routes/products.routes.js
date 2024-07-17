@@ -4,6 +4,7 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
+import { handlePolicies } from "../services/utils.js";
 import config from "../config.js";
 
 
@@ -94,7 +95,7 @@ products.get('/:pid', async (req,res)=>{
 
 
 
-products.post('/', uploader.single('thumbnail'), async (req,res)=>{
+products.post('/',  handlePolicies (['ADMIN']), uploader.single('thumbnail'), async (req,res)=>{
     try{
         
         // Obtenemos la instancia global del objeto socketServer
@@ -147,7 +148,7 @@ products.post('/', uploader.single('thumbnail'), async (req,res)=>{
 //     }
 // });
 
-products.put('/:pid', async (req,res)=>{
+products.put('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
     try{
         const pid = req.params.pid;
         
@@ -181,7 +182,7 @@ products.put('/:pid', async (req,res)=>{
 //     }
 // });
 
-products.delete('/:pid', async (req,res)=>{
+products.delete('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
     try{
         // Obtenemos la instancia global del objeto socketServer
         const socketServer = req.app.get('socketServer');

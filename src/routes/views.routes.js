@@ -3,6 +3,7 @@ import  initSocket  from '../services/sockets.js';
 import ProductsManager from "../controllers/products.manager.js";
 //import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
 import CartsManager from "../controllers/carts.manager.js";
+import { handlePolicies } from "../services/utils.js";
 
 
 const views = Router();
@@ -46,7 +47,7 @@ views.get('/realtimeproducts', async (req,res)=>{
     }
 });
 
-views.get('/chat', async (req,res)=>{
+views.get('/chat', handlePolicies (['USER']), async (req,res)=>{
 
     try{
         

@@ -11,7 +11,7 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import auth from './routes/auth.routes.js'
 import users from './routes/users.routes.js';
-import TestRouter from './routes/test.routes.js';
+//import TestRouter from './routes/test.routes.js';
 import passport from 'passport';
 import MongoSingleton from './services/mongo.singleton.js';
 import cors from 'cors';
@@ -54,7 +54,7 @@ app.use('/api/views', views);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
 
-app.use('/api/test', new TestRouter().getRouter());
+//app.use('/api/test', new TestRouter().getRouter());
 //la parte estatica que se muestra:
 // app.use('/', express.static('src/public'));
 

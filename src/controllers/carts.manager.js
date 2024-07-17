@@ -62,6 +62,14 @@ class CartsManager {
             return err.message;
         };
     };
+
+    validationPurchase = async (cid, user) => {
+        try {
+            return await service.validationPurchase(cid, user);
+        } catch (err) {
+            return err.message;
+        };
+    };
 }
 
 export default CartsManager;

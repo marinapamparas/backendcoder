@@ -56,7 +56,7 @@ class UsersService {
         try {
 
             const user = await modelUsers.findOne({ email: username });
-
+            
             if (!user) {
                 console.error('Usuario no encontrado en la base de datos');
                 return null;
@@ -65,9 +65,12 @@ class UsersService {
                 
                 if (isValidPassword(user, password)){
                     const userChequeado = user;
+                    
                     return userChequeado;
                 }
+                
             }else{
+                
                 return user;
             }
       

@@ -2,6 +2,8 @@ import { Router } from "express";
 //import { CartManager } from "../dao/CartManager.js";
 //import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
 import CartsManager from '../controllers/carts.manager.js';
+import { handlePolicies } from "../services/utils.js";
+import passport from "passport";
 
 
 const carts = Router();
@@ -15,11 +17,34 @@ carts.get('/:cid', async (req,res)=>{
         const cid= req.params.cid;
         
         const CartsId = await CMMDB.getOne(cid)
-        
+
         res.status(200).send({payload: CartsId})
 
     }catch (error){
         console.error('Error, the cart doesnt exists:', error);
+        res.status(500).send('Server error');
+    }
+});
+
+//passport.authenticate('current', { failureRedirect: `/:cid/purchase?error=${encodeURI('No se pudo recuperar el usuario')}`})
+
+carts.get('/:cid/purchase', passport.authenticate('current', { failureRedirect: `/purchase?error=${encodeURI('No hay un token registrado')}`}), async (req,res)=>{
+    try{ 
+    const cid = req.params.cid
+    
+    const user =  req.user._doc;  // Recuperar el usuario autenticado
+
+    if (!user) {
+        throw new Error('No se pudo recuperar el usuario');
+    }
+    
+    const purchaseResponse = await CMMDB.validationPurchase(cid, user)
+    
+
+    // res.redirect('/api/views/ticket')
+    res.status(200).send({payload: purchaseResponse})
+    }catch (error){
+        console.error('Error, the purchase couldnt be made:', error);
         res.status(500).send('Server error');
     }
 });
@@ -38,7 +63,7 @@ carts.post('/', async (req,res)=>{
 
 });
 
-carts.post('/:cid/product/:pid', (req,res)=>{
+carts.post('/:cid/product/:pid', handlePolicies (['USER']),  (req,res)=>{
     try{
         const cid= req.params.cid;
         const pid= req.params.pid;

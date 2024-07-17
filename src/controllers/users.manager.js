@@ -6,7 +6,6 @@ const service = new UsersService();
 class UsersDTO {
     constructor(user) {
         this.user = user;
-        this.user.title = this.user.firstName.toUpperCase();
     }
 }
 

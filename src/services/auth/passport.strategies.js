@@ -65,9 +65,9 @@ const initAuthStrategies = () => {
                     password : createHash(password),
                     _cart_id: newCart._id 
                 }
-
+                
                 const foundUser = await UMMDB.add(user);
-
+                
                 if (foundUser) {
                     const { password, ...filteredFoundUser } = foundUser;
                     return done(null, filteredFoundUser);
@@ -152,6 +152,7 @@ const initAuthStrategies = () => {
         },
         async (jwt_payload, done) => {
             try {
+                
                 return done(null, jwt_payload);
             } catch (err) {
                 return done(err);

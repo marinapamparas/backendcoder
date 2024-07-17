@@ -1,5 +1,13 @@
 import modelCarts from "../../models/carts.models.js";
+import modelProducts from '../../models/products.models.js';
+import modelTickets from "../../models/ticket.models.js";
+import ProductsService from "./products.dao.mdb.js";
+import TicketsService from "./ticket.dao.mdb.js";
 
+
+
+const ticketsDao = new TicketsService();
+const productsDao = new ProductsService();
 
 class CartsService {
     constructor() {
@@ -75,7 +83,7 @@ class CartsService {
 
             if (cartExists) {
                 // Verificar si el producto ya está en el carrito
-                const existingProduct = cartExists.products.find(item => item.id === pid);
+                const existingProduct = cartExists.products.find(item => item._id.equals(pid));
 
                 if (existingProduct) {
                     // Si el producto ya existe, actualizar la cantidad
@@ -107,13 +115,13 @@ class CartsService {
         try {
             // Buscar el carrito por su ID
             const cartExists = await modelCarts.findById(cid);
-
+            
             if (cartExists) {
                 // Verificar si el producto está en el carrito
-                const existingProduct = cartExists.products.find(item => item.id === pid);
+                const existingProduct = cartExists.products.find(item => item._id.equals(pid));                
 
                 if (existingProduct) {
-                    existingProduct.deleteOne()
+                    existingProduct.deleteOne()                    
                 }    
                 // Guardar el carrito actualizado en la base de datos
                 await cartExists.save();
@@ -157,13 +165,72 @@ class CartsService {
         try {
             const cart = await modelCarts
             .findById(cartId)
-            // .populate({path: 'products._id', model: modelProducts}); - ya lo tengo automatizado en modelcarts
+            .populate({path: 'products._id', model: modelProducts}); //- ya lo tengo automatizado en modelcarts
+            
             return cart;
         } catch (error) {
             console.error('Error al obtener el carrito por ID:', error);
         }
     }
 
+    validationPurchase = async(cid, user) => {
+        const cart = await this.getOne(cid) //obtengo el carrito en base al id que me dan
+        const userData = user
+       
+        
+        if (!cart) {
+            throw new Error('Carrito no encontrado');
+        }
+
+        let ticketAmount = 0
+
+        for (let item of cart.products) {
+            const productStock = item._id.stock;
+            const requestedQuantity = item.quantity;
+            
+            //si me alcanza el stock
+            if(requestedQuantity <= productStock){
+                //modifico la cantidad restante del producto en mi db
+                const quantityUpdated =  productStock - requestedQuantity
+                
+                await productsDao.update(item._id._id, {"stock" : quantityUpdated}, {new : true})
+
+                //borrar el producto del carrito
+                await this.deleteProduct(cid, item._id._id)
+
+                //generar el ticket de compra
+                ticketAmount = ticketAmount + (requestedQuantity*item._id.price)
+
+            }
+            
+            if (requestedQuantity > productStock) {
+                //modifico stock del producto
+                await productsDao.update(item._id._id, {"stock" : 0}, {new : true})
+                
+                //en el carrito dejo la cantidad que no pudo comprar
+                const quantityNotPurchased = requestedQuantity - productStock
+                await this.updateProduct(cid, item._id._id, quantityNotPurchased)
+
+                //generar el ticket con la cantidad que si compre
+                ticketAmount = ticketAmount + (productStock*item._id.price)
+            }
+            
+        }
+
+        if(ticketAmount > 0){
+            const ticket = {
+                amount : ticketAmount,
+                purchaser : userData.email 
+            }
+            const ticketFinished = await ticketsDao.add(ticket)
+            console.log('ticketFinished:', ticketFinished)
+            return ticketFinished
+        }
+
+        return null;
+            
+
+    }
 }
 
 export default CartsService;
