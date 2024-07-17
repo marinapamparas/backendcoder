@@ -6,12 +6,23 @@ import session from "express-session";
 import { createHash, verifyRequiredBody, createToken, verifyToken } from "../services/utils.js";
 import initAuthStrategies, { passportCall } from "../services/auth/passport.strategies.js";
 import passport from "passport";
+import nodemailer from "nodemailer";
 
 
 const auth = Router();
 const UMMDB = new UsersManager ();
 initAuthStrategies();
 
+
+//configuracion de un transporte:
+const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.GMAIL_APP_USER,
+        pass: config.GMAIL_APP_PASS
+    }
+});
 
 //middleware para controlar si tiene session
 // const adminAuth = (req, res, next) => {
@@ -230,7 +241,19 @@ auth.get('/ppprivate', passportCall('jwtlogin'), handlePolicies (['ADMIN', 'PREM
 
 auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'password']),passport.authenticate('register', { failureRedirect: `http://localhost:8080/api/views/register?error=${encodeURI('No se pudo hacer el registro exitosamente')}`}), async (req, res) => {
     try{
- 
+        
+        await transport.sendMail({
+            from: `no-reply <${config.GMAIL_APP_USER}>`, 
+            to: `${req.user._doc.email}`,
+            subject: 'Registro exitoso',
+            html: '<div><img src="cid:logo1" width="50" height="50"></img><h2>Bienvenido!</h2><h3>Te registraste exitosamente a mi ecommerce!</h3><br><p>Gracias por formar parte de nuestro sistema</p> <br><p>Esperamos recibir muchas compras de tu parte JAJAJAJ</p> <br><p>por favor no responder este mail, es automático</p></div>',
+            // attachments:[{
+            //     filename:'logo.jpeg',
+            //     path:__dirname+'public/img/logo.jpeg',
+            //     cid:'logo1'
+            // }]
+        });
+        
         res.redirect('/api/views/login');
 
     

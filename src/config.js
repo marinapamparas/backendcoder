@@ -15,7 +15,7 @@ const clOptions = commandLine.opts();
 
 
 //parseo de variables de entorno
-dotenv.config();
+dotenv.config({ path: clOptions.mode === 'devel' ? '.env.devel' : '.env.prod' });
 
 
 const config = {
@@ -37,7 +37,9 @@ const config = {
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
-    PERSISTENCE: process.env.PERSISTENCE || 'mongo'
+    PERSISTENCE: process.env.PERSISTENCE || 'mongo',
+    GMAIL_APP_USER: process.env.GMAIL_APP_USER,
+    GMAIL_APP_PASS: process.env.GMAIL_APP_PASS
 };
 
 
