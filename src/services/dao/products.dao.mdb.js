@@ -68,7 +68,7 @@ class ProductsService {
             //Recuperar productos utilizando paginación y filtro de búsqueda
             
             const products = await modelProducts.paginate(queryFilter, options);
-            console.log('products:', products)
+            
             return products;
             
         } catch (error) {

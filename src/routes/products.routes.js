@@ -4,7 +4,7 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
-import { handlePolicies, generateFakeProducts, verifyMongoDBId } from "../services/utils.js";
+import { handlePolicies, generateFakeProducts, verifyMongoDBId, verifyRequiredBody } from "../services/utils.js";
 import config, {errorsDictionary} from "../config.js";
 import CustomError from "../services/CustomError.class.js";
 
@@ -105,7 +105,7 @@ products.get('/:pid', async (req,res)=>{
 
 
 
-products.post('/',  handlePolicies (['ADMIN']), uploader.single('thumbnail'), async (req,res)=>{
+products.post('/', handlePolicies (['ADMIN']), verifyRequiredBody(["title", "description", "price", "code", "category"]), uploader.single('thumbnail'), async (req,res)=>{
     try{
         
         // Obtenemos la instancia global del objeto socketServer

@@ -6,7 +6,7 @@ const service = new ProductsService();
 class ProductsDTO {
     constructor(product) {
         this.product = product;
-        this.product.title = this.product.title.toUpperCase();
+        //this.product.title = this.product.title.toUpperCase();
     }
 }
 
