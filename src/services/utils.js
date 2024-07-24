@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../config.js';
+import { faker } from '@faker-js/faker';
 
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
@@ -75,4 +76,26 @@ export const handlePolicies = policies => {
         if(!policies.includes(req.user._doc.role)) return res.status(403).send({error: "Usuario no autorizado"});
         next();   
     }
+}
+
+export const generateFakeProducts = async (qty) => {
+    const products = [];
+    // const mongoObjectId = () =>{
+    //     return (Array(12).fill(0).map(() => (Math.floor(Math.random() * 256)).toString(16).padStart(2, '0'))).join('');
+    //   }
+
+    for (let i = 0; i < qty; i++) {
+        const _id = faker.database.mongodbObjectId();
+        const title = faker.commerce.product()
+        const description = faker.commerce.productDescription()
+        const price = faker.commerce.price({ min: 100, max: 5000, dec: 0, symbol: '$' })
+        const code = Math.floor(1000 + Math.random() * 9000)
+        const stock = 10
+        const status = true
+        const category = faker.commerce.department()
+ 
+        products.push({ _id, title, description, price, code, stock, status, category});
+    }
+
+    return products;
 }

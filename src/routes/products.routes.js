@@ -4,8 +4,9 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
-import { handlePolicies } from "../services/utils.js";
+import { handlePolicies, generateFakeProducts } from "../services/utils.js";
 import config from "../config.js";
+
 
 
 
@@ -23,6 +24,18 @@ products.param('pid', async (req, res, next, pid) => {
 
     next();
 })
+
+products.get('/mockingproducts', async (req,res)=>{
+    try{                
+        const mockProducts = await generateFakeProducts(100)
+        
+        res.status(200).send({payload: mockProducts})
+
+    }catch (error){
+        console.error('Error al crear mock de productos:', error);
+        res.status(500).send('Error del servidor');
+    }
+});
 
 products.get('/', async (req,res)=>{
     try{                
