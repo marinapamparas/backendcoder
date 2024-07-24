@@ -1,4 +1,6 @@
 import modelProducts from '../../models/products.models.js';
+import CustomError from '../CustomError.class.js';
+import { errorsDictionary } from '../../config.js';
 
 class ProductsService {
     constructor() {
@@ -9,7 +11,9 @@ class ProductsService {
             const product = await modelProducts.findById(filter);
             return product;
         } catch (error) {
-            console.error('Error al obtener el producto por ID:', error);
+            //console.error('Error al obtener el producto por ID:', error);
+            
+            throw new CustomError(errorsDictionary.ID_NOT_FOUND)
         }
     };
 

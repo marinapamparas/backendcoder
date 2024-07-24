@@ -15,6 +15,7 @@ import users from './routes/users.routes.js';
 import passport from 'passport';
 import MongoSingleton from './services/mongo.singleton.js';
 import cors from 'cors';
+import errorsHandler from './services/errors.handler.js';
 
 
 //Instancio el framework y la clase
@@ -53,6 +54,7 @@ app.use('/api/carts', carts);
 app.use('/api/views', views);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
+app.use(errorsHandler);
 
 //app.use('/api/test', new TestRouter().getRouter());
 //la parte estatica que se muestra:

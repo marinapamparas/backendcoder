@@ -4,8 +4,9 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
-import { handlePolicies, generateFakeProducts } from "../services/utils.js";
-import config from "../config.js";
+import { handlePolicies, generateFakeProducts, verifyMongoDBId } from "../services/utils.js";
+import config, {errorsDictionary} from "../config.js";
+import CustomError from "../services/CustomError.class.js";
 
 
 
@@ -17,13 +18,7 @@ const io = initSocket();
 
 
 
-products.param('pid', async (req, res, next, pid) => {
-    if (!config.MONGODB_ID_REGEX.test(req.params.pid)) {
-        return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
-    }
-
-    next();
-})
+products.param('id', verifyMongoDBId());
 
 products.get('/mockingproducts', async (req,res)=>{
     try{                
@@ -33,7 +28,8 @@ products.get('/mockingproducts', async (req,res)=>{
 
     }catch (error){
         console.error('Error al crear mock de productos:', error);
-        res.status(500).send('Error del servidor');
+        
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -51,7 +47,8 @@ products.get('/', async (req,res)=>{
 
     }catch (error){
         console.error('Error al cargar los productos:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        //res.status(500).send('Error del servidor');
     }
 });
 
@@ -86,7 +83,7 @@ products.get('/:pid', async (req,res)=>{
         
     }catch (error){
         console.error('Error, no se encontro el producto:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -126,7 +123,8 @@ products.post('/',  handlePolicies (['ADMIN']), uploader.single('thumbnail'), as
     
     }catch (error){
         console.error('Error al cargar el producto:', error);
-        res.status(500).send('Error del servidor');
+        //res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR)
     }
 });
 
@@ -174,8 +172,8 @@ products.put('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
         res.status(200).send(update)
     
     }catch (error){
-        console.error('Error al modificar el producto', error);
-        res.status(500).send('Error del servidor');
+        //console.error('Error al modificar el producto', error);
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -209,7 +207,7 @@ products.delete('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
 
     }catch (error){
         console.error('Error, no se pude borrar el producto:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -234,7 +232,8 @@ products.delete('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
 // });
 
 products.all('*', async(req,res)=>{
-    res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada'});
+    throw new CustomError(errorsDictionary.ROUTING_ERROR)
+    //res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada'});
 });
 
 

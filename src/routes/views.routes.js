@@ -4,6 +4,8 @@ import ProductsManager from "../controllers/products.manager.js";
 //import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
 import CartsManager from "../controllers/carts.manager.js";
 import { handlePolicies } from "../services/utils.js";
+import CustomError from "../services/CustomError.class.js";
+import { errorsDictionary } from "../config.js";
 
 
 const views = Router();
@@ -28,6 +30,7 @@ views.get('/', async (req,res)=>{
         res.status(200).render('home', data)
     
     }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error al leer el archivo de productos:', error);
         res.status(500).send('Error del servidor');
     }
@@ -42,6 +45,7 @@ views.get('/realtimeproducts', async (req,res)=>{
         res.status(200).render('realtimeproducts', data)
 
     }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error al cargar el producto:', error);
         res.status(500).send('Error del servidor');
     }
@@ -54,6 +58,7 @@ views.get('/chat', handlePolicies (['USER']), async (req,res)=>{
         res.status(200).render('chat', {})
     
     }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
         res.status(500).send('Error del servidor');
     }
@@ -83,8 +88,9 @@ views.get('/products', async (req,res)=>{
         });
     
     }catch (error){
-        console.error('Error al leer el archivo de productos:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        //console.error('Error al leer el archivo de productos:', error);
+        //res.status(500).send('Error del servidor');
     }
 });
 
@@ -101,6 +107,7 @@ views.get('/cart/:cid', async (req,res)=>{
 
 
     }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error al recuperar el carrito:', error);
         res.status(500).send('Error del servidor');
     }
@@ -114,6 +121,7 @@ views.get('/login', async (req,res)=>{
         res.status(200).render('login', {});
     
     }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
         res.status(500).send('Error del servidor');
     }
@@ -125,6 +133,7 @@ views.get('/register', async (req,res)=>{
         res.status(200).render('register', {});
     
     }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
         res.status(500).send('Error del servidor');
     }
@@ -137,6 +146,7 @@ views.get('/profile', async (req,res)=>{
         res.status(200).render('profile', { user: req.user });
     
     }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
         res.status(500).send('Error del servidor');
     }
