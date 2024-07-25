@@ -21,8 +21,7 @@ carts.get('/:cid', async (req,res)=>{
         res.status(200).send({payload: CartsId})
 
     }catch (error){
-        console.error('Error, the cart doesnt exists:', error);
-        res.status(500).send('Server error');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -44,8 +43,7 @@ carts.get('/:cid/purchase', passport.authenticate('current', { failureRedirect: 
     // res.redirect('/api/views/ticket')
     res.status(200).send({payload: purchaseResponse})
     }catch (error){
-        console.error('Error, the purchase couldnt be made:', error);
-        res.status(500).send('Server error');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -57,24 +55,22 @@ carts.post('/', async (req,res)=>{
         res.status(200).send('The cart has been created succesfully')
 
     }catch (error){
-        console.error('Error, the cart has not been created', error);
-        res.status(500).send('Server error');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 
 });
-
-carts.post('/:cid/product/:pid', handlePolicies (['USER']),  (req,res)=>{
+//handlePolicies (['USER']),
+carts.post('/:cid/product/:pid',  (req,res)=>{
     try{
         const cid= req.params.cid;
         const pid= req.params.pid;
-
+        
         CMMDB.addProduct(cid, pid)
 
         res.status(200).send('Success')
 
     }catch (error){
-        console.error('Error, the product has not been created', error);
-        res.status(500).send('Server error');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -88,8 +84,7 @@ carts.delete('/:cid/product/:pid', (req,res)=>{
         res.status(200).send('Success')
 
     }catch (error){
-        console.error('Error, the product could not be deleted', error);
-        res.status(500).send('Server error');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -103,8 +98,7 @@ carts.delete('/:cid', (req,res)=>{
         res.status(200).send('Success')
 
     }catch (error){
-        console.error('Error, the product could not be deleted', error);
-        res.status(500).send('Server error');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -119,8 +113,7 @@ carts.put('/:cid/product/:pid/:qty', async (req,res)=>{
         res.status(200).send({payload: CartsId})
 
     }catch (error){
-        console.error('Error, the cart doesnt exists:', error);
-        res.status(500).send('Server error');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 

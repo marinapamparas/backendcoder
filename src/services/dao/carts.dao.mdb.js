@@ -1,6 +1,8 @@
+import { errorsDictionary } from "../../config.js";
 import modelCarts from "../../models/carts.models.js";
 import modelProducts from '../../models/products.models.js';
 import modelTickets from "../../models/ticket.models.js";
+import CustomError from "../CustomError.class.js";
 import ProductsService from "./products.dao.mdb.js";
 import TicketsService from "./ticket.dao.mdb.js";
 
@@ -20,19 +22,21 @@ class CartsService {
             await cart.save();
             return cart;
         } catch (error) {
-            console.error('Error al crear el carrito:', error);
+            throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR)
         }
     }
 
     addProduct = async (cid, pid) => {
         // Validaciones
         if (!cid || !pid) {
-            console.error("All fields are mandatory");
-            return;
+            throw new CustomError(errorsDictionary.FEW_PARAMETERS)
+            // console.error("All fields are mandatory");
+            // return;
         }
         if (cid < 0 || pid < 0) {
-            console.error("The id is not valid")
-            return;
+            throw new CustomError(errorsDictionary.INVALID_PARAMETER)
+            //  console.error("The id is not valid")
+            //  return;
         }
 
         try {
@@ -48,9 +52,15 @@ class CartsService {
                     existingProduct.quantity++;
                     console.log("Quantity incremented to product successfully");
                 } else {
-                    // Si el producto no existe, agregarlo al carrito
-                    cartExists.products.push({ _id: pid, quantity: 1 });
-                    console.log("Product added to cart successfully");
+                    // Si el producto no existe, chequear que sea real y después agregarlo al carrito
+
+                    const productDB = await productsDao.getOne(pid)
+                        if(productDB){
+                            cartExists.products.push({ _id: pid, quantity: 1 });
+                            console.log("Product added to cart successfully");
+                        }else{
+                            return;
+                        }
                 }
 
                 // Guardar el carrito actualizado en la base de datos
@@ -59,7 +69,7 @@ class CartsService {
                 console.log('The cart does not exist');
             }
         } catch (error) {
-            console.error('Error adding product to cart:', error);
+            throw new CustomError(errorsDictionary.RECORD_UPDATE_ERROR)
         }
     };
 
@@ -97,7 +107,7 @@ class CartsService {
                 console.log('The cart does not exist');
             }
         } catch (error) {
-            console.error('Error updating quantity of product:', error);
+            throw new CustomError(errorsDictionary.RECORD_UPDATE_ERROR)
         }
     }
 
@@ -129,7 +139,7 @@ class CartsService {
                 console.log('The cart does not exist');
             }
         } catch (error) {
-            console.error('Error deleting the product:', error);
+            throw new CustomError(errorsDictionary.RECORD_DELETE_ERROR)
         }
     }
 
@@ -157,7 +167,7 @@ class CartsService {
                 console.log('The cart does not exist');
             }
         } catch (error) {
-            console.error('Error deleting the product:', error);
+            throw new CustomError(errorsDictionary.RECORD_DELETE_ERROR)
         }
     }
 
@@ -169,7 +179,7 @@ class CartsService {
             
             return cart;
         } catch (error) {
-            console.error('Error al obtener el carrito por ID:', error);
+            throw new CustomError(errorsDictionary.INVALID_PARAMETER)
         }
     }
 

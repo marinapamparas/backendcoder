@@ -19,7 +19,7 @@ class CartsManager {
             const normalizedData = new CartsDTO(newData);
             return await service.add(normalizedData.cart);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -27,7 +27,7 @@ class CartsManager {
         try {
             return await service.getOne(filter);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -35,7 +35,7 @@ class CartsManager {
         try {
             return await service.addProduct(cid, pid);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -43,7 +43,7 @@ class CartsManager {
         try {
             return await service.updateProduct(cid, pid, qty);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -51,7 +51,7 @@ class CartsManager {
         try {
             return await service.deleteProduct(cid, pid);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -59,7 +59,7 @@ class CartsManager {
         try {
             return await service.deleteAllProducts(filter);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -67,7 +67,7 @@ class CartsManager {
         try {
             return await service.validationPurchase(cid, user);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 }
