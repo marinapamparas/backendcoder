@@ -82,13 +82,18 @@ export const verifyMongoDBId = (id) => {
 
 export const handlePolicies = policies => {
     return async (req, res, next) => {
-        if (policies[0]=== "PUBLIC") return next();
-        if(!req.user) throw new CustomError(errorsDictionary.INVALID_AUTENTICATION)
-            //return res.status(401).send({status:"error", error: "Usuario no autenticado"});
-       
-        if(!policies.includes(req.user._doc.role)) throw new CustomError(errorsDictionary.INVALID_AUTHORIZATION)
-            //return res.status(403).send({error: "Usuario no autorizado"});
-        next();   
+        try{
+            if (policies[0]=== "PUBLIC") return next();
+
+            if(!req.user) throw new CustomError(errorsDictionary.INVALID_AUTENTICATION);
+
+            if(!policies.includes(req.user._doc.role)) return next();
+            
+            throw new CustomError(errorsDictionary.INVALID_AUTHORIZATION);
+
+        } catch (error){
+            next(error);   
+        }
     }
 }
 

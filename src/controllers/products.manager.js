@@ -18,7 +18,7 @@ class ProductsManager {
         try {
             return await service.getOne(filter);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -26,7 +26,7 @@ class ProductsManager {
         try {
             return await service.getPaginated(queryHtml, limitHtml, pageHtml, sortHtml);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -35,7 +35,7 @@ class ProductsManager {
             const normalizedData = new ProductsDTO(newData);
             return await service.add(normalizedData.product);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -43,7 +43,7 @@ class ProductsManager {
         try {
             return await service.update(productId, updates, options);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 
@@ -51,7 +51,7 @@ class ProductsManager {
         try {
             return await service.delete(filter);
         } catch (err) {
-            return err.message;
+            return err;
         };
     };
 }

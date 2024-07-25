@@ -25,9 +25,9 @@ products.get('/mockingproducts', async (req,res)=>{
         const mockProducts = await generateFakeProducts(100)
         
         res.status(200).send({payload: mockProducts})
-
+        
     }catch (error){
-        console.error('Error al crear mock de productos:', error);
+        //console.error('Error al crear mock de productos:', error);
         
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
@@ -46,7 +46,7 @@ products.get('/', async (req,res)=>{
         res.status(200).send({payload: productsFile})
 
     }catch (error){
-        console.error('Error al cargar los productos:', error);
+       // console.error('Error al cargar los productos:', error);
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         //res.status(500).send('Error del servidor');
     }
@@ -78,12 +78,11 @@ products.get('/:pid', async (req,res)=>{
     
         const pid= req.params.pid;
         const productsId = await PMMDB.getOne(pid)
-        
-        res.status(200).send({payload: productsId})
+        res.status(200).send({payload: productsId})        
         
     }catch (error){
-        console.error('Error, no se encontro el producto:', error);
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        //console.error('Error, no se encontro el producto:', error);
     }
 });
 
@@ -122,7 +121,7 @@ products.post('/', handlePolicies (['ADMIN']), verifyRequiredBody(["title", "des
         socketServer.emit('productsChanged', 'Se cargo un nuevo producto' );
     
     }catch (error){
-        console.error('Error al cargar el producto:', error);
+        //console.error('Error al cargar el producto:', error);
         //res.status(500).send('Error del servidor');
         throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR)
     }
@@ -172,7 +171,7 @@ products.put('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
         res.status(200).send(update)
     
     }catch (error){
-        //console.error('Error al modificar el producto', error);
+        
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
@@ -206,7 +205,7 @@ products.delete('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
         socketServer.emit('productsChanged', 'Se elimino un producto' );
 
     }catch (error){
-        console.error('Error, no se pude borrar el producto:', error);
+        
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });

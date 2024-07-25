@@ -57,7 +57,10 @@ export const errorsDictionary = {
     RECORD_CREATION_ERROR: { code: 10, status: 500, message: 'Error al intentar crear el registro' },    
     RECORD_CREATION_OK: { code: 11, status: 200, message: 'Registro creado' },
     INVALID_AUTENTICATION: {code:12, status:401, message: 'Usuario no autenticado'},
-    INVALID_AUTHORIZATION: {code:13, status:403, message: 'Usuario no autorizado'}
+    INVALID_AUTHORIZATION: {code:13, status:403, message: 'Usuario no autorizado'},
+    INVALID_SEARCH: {code:14, status:400, message: 'No se pudieron recuperar los registros'},
+    RECORD_UPDATE_ERROR: { code: 15, status: 500, message: 'Error al intentar modificar el registro' },
+    RECORD_DELETE_ERROR: { code: 16, status: 500, message: 'Error al intentar eliminar el registro' }
 }
 
 

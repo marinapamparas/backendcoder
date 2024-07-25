@@ -10,9 +10,8 @@ class ProductsService {
         try {
             const product = await modelProducts.findById(filter);
             return product;
-        } catch (error) {
-            //console.error('Error al obtener el producto por ID:', error);
             
+        } catch (error) {          
             throw new CustomError(errorsDictionary.ID_NOT_FOUND)
         }
     };
@@ -72,17 +71,7 @@ class ProductsService {
             return products;
             
         } catch (error) {
-            
-            console.error('Error al obtener los productos:', error);
-            
-            if (error.name === 'ValidationError') {
-            
-            console.error('Validation errors:', error.errors);
-            
-            }
-            
-            return { error: error.message };
-            
+            throw new CustomError(errorsDictionary.INVALID_SEARCH);
         }
             
     };
@@ -94,7 +83,7 @@ class ProductsService {
             await product.save();
             return product;
         } catch (error) {
-            console.error('Error al crear el producto:', error);
+            throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
         }
     };
 
@@ -103,7 +92,7 @@ class ProductsService {
             const product = await modelProducts.findByIdAndUpdate(productId, updates, options);
             return product;
         } catch (error) {
-            console.error('Error al actualizar el producto:', error);
+            throw new CustomError(errorsDictionary.RECORD_UPDATE_ERROR);
         }
     };
 
@@ -112,7 +101,7 @@ class ProductsService {
             await modelProducts.findByIdAndDelete(filter);
             console.log('Producto eliminado correctamente');
         } catch (error) {
-            console.error('Error al eliminar el producto:', error);
+            throw new CustomError(errorsDictionary.RECORD_DELETE_ERROR);
         }
     };
 }
