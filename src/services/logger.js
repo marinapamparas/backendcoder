@@ -46,11 +46,21 @@ const prodLogger = winston.createLogger({
     ]
 });
 
-const addLogger = (req, res, next) => {
-    //req.logger = devLogger;
-    req.logger = config.MODE === 'dev' ? devLogger : prodLogger;
-    //req.logger.http(`${new Date().toDateString()} ${req.method} ${req.url}`);
-    next();
-}
+// const addLogger = (req, res, next) => {
+//     //req.logger = devLogger;
+//     req.logger = config.MODE === 'dev' ? devLogger : prodLogger;
+//     //req.logger.http(`${new Date().toDateString()} ${req.method} ${req.url}`);
+//     next();
+// }
 
-export default addLogger;
+
+export const logger = config.MODE === "dev" ? devLogger : prodLogger;
+
+export const addLogger = (req, res, next) => {
+	req.logger = logger;
+	req.logger.http(`Method ${req.method} - ${req.url}`);
+	next();
+};
+
+
+// export default addLogger;

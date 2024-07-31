@@ -4,7 +4,7 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
-import { handlePolicies, generateFakeProducts, verifyRequiredBody } from "../services/utils.js";
+import { handlePolicies, generateFakeProducts, verifyRequiredBody, verifyMongoDBId } from "../services/utils.js";
 import config, {errorsDictionary} from "../config.js";
 import CustomError from "../services/CustomError.class.js";
 
@@ -16,21 +16,21 @@ const products = Router();
 const PMMDB = new ProductsManager()
 const io = initSocket();
 
+products.param('pid', verifyMongoDBId())
 
-
-products.param('pid', async (req, res, next, pid) =>{
+// products.param('pid', async (req, res, next, pid) =>{
     
-    if (!config.MONGODB_ID_REGEX.test(pid)) {
+//     if (!config.MONGODB_ID_REGEX.test(pid)) {
 
-        req.logger.error(`El ID no contiene un formato válido de MongoDB LOGGER`)
-        const error = new CustomError(errorsDictionary.INVALID_MONGOID_FORMAT)
-        return next (error);
-        //return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
-    }
+//         req.logger.error(`El ID no contiene un formato válido de MongoDB LOGGER`)
+//         const error = new CustomError(errorsDictionary.INVALID_MONGOID_FORMAT)
+//         return next (error);
+//         //return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+//     }
 
-    next();
+//     next();
     
-});
+// });
 
 products.get('/mockingproducts', async (req,res)=>{
     try{                

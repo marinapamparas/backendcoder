@@ -11,12 +11,13 @@ import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import auth from './routes/auth.routes.js'
 import users from './routes/users.routes.js';
+import test from './routes/test.routes.js';
 //import TestRouter from './routes/test.routes.js';
 import passport from 'passport';
 import MongoSingleton from './services/mongo.singleton.js';
 import cors from 'cors';
 import errorsHandler from './services/errors.handler.js';
-import addLogger from './services/logger.js';
+import { logger, addLogger } from './services/logger.js';
 
 //Instancio el framework y la clase
 const app = express ();
@@ -55,6 +56,7 @@ app.use('/api/carts', carts);
 app.use('/api/views', views);
 app.use('/api/users', users);
 app.use('/api/auth', auth);
+app.use('/api/test', test);
 app.use(errorsHandler);
 
 //app.use('/api/test', new TestRouter().getRouter());
