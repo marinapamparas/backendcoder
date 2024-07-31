@@ -7,6 +7,8 @@ import { handlePolicies, verifyRequiredBody, createToken, verifyToken } from "..
 import initAuthStrategies, { passportCall } from "../services/auth/passport.strategies.js";
 import passport from "passport";
 import nodemailer from "nodemailer";
+import moment from "moment";
+
 
 
 
@@ -36,10 +38,12 @@ auth.get('/current', passport.authenticate('current', { failureRedirect: `/curre
 
 auth.post('/jwtlogin', verifyRequiredBody(['email', 'password']), passport.authenticate('login', { failureRedirect: `/login?error=${encodeURI('Usuario o clave no válidos')}`}), async (req, res) => {
     try {
-        
         const token = createToken(req.user, '1h');
+        const date = moment().format('DD-MM-YYYY HH:mm:ss');
         
         res.cookie(`${config.APP_NAME}_cookie`, token, { maxAge: 60 * 60 * 1000, httpOnly: true });
+        
+        req.logger.info(`Se ha loggueado exitosamente ${req.user._doc.firstName} ${date}`)
         res.redirect('/api/views/products');
 
     } catch (err) {
@@ -83,7 +87,8 @@ auth.get('/ppprivate', passportCall('jwtlogin'), handlePolicies (['ADMIN', 'PREM
 
 auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'password']),passport.authenticate('register', { failureRedirect: `http://localhost:8080/api/views/register?error=${encodeURI('No se pudo hacer el registro exitosamente')}`}), async (req, res) => {
     try{
-        
+        const date = moment().format('DD-MM-YYYY HH:mm:ss');
+        req.logger.info(`Se ha registrado exitosamente un usuario ${date}`);
         await transport.sendMail({
             from: `no-reply <${config.GMAIL_APP_USER}>`, 
             to: `${req.user._doc.email}`,
@@ -106,8 +111,11 @@ auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'p
 
 auth.get('/logout', async (req, res) => {
     try{
+        const date = moment().format('DD-MM-YYYY HH:mm:ss');
+        req.logger.info(`Se ha desconectado ${req.user._doc.firstName} ${date}`);
         req.session.destroy((err) =>{
             if(err) return res.status(500).send({origin: config.SERVER, payload: 'Error al ejecutar el logout'});
+
             res.redirect('/api/views/login');
             // res.status(200).send({origin:config.SERVER, payload: 'Usuario desconectado'});
         })

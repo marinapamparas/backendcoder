@@ -16,7 +16,7 @@ import passport from 'passport';
 import MongoSingleton from './services/mongo.singleton.js';
 import cors from 'cors';
 import errorsHandler from './services/errors.handler.js';
-
+import addLogger from './services/logger.js';
 
 //Instancio el framework y la clase
 const app = express ();
@@ -49,6 +49,7 @@ app.set('views', `${config.DIRNAME}/views`);
 app.set ('view engine', 'handlebars');
 
 //la redireccion a las rutas:
+app.use(addLogger)
 app.use('/api/products', products);
 app.use('/api/carts', carts);
 app.use('/api/views', views);

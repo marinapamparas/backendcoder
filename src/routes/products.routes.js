@@ -4,7 +4,7 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
-import { handlePolicies, generateFakeProducts, verifyMongoDBId, verifyRequiredBody } from "../services/utils.js";
+import { handlePolicies, generateFakeProducts, verifyRequiredBody } from "../services/utils.js";
 import config, {errorsDictionary} from "../config.js";
 import CustomError from "../services/CustomError.class.js";
 
@@ -18,7 +18,19 @@ const io = initSocket();
 
 
 
-products.param('id', verifyMongoDBId());
+products.param('pid', async (req, res, next, pid) =>{
+    
+    if (!config.MONGODB_ID_REGEX.test(pid)) {
+
+        req.logger.error(`El ID no contiene un formato válido de MongoDB LOGGER`)
+        const error = new CustomError(errorsDictionary.INVALID_MONGOID_FORMAT)
+        return next (error);
+        //return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+    }
+
+    next();
+    
+});
 
 products.get('/mockingproducts', async (req,res)=>{
     try{                
@@ -102,7 +114,7 @@ products.get('/:pid', async (req,res)=>{
 //     }
 // });
 
-
+// 
 
 products.post('/', handlePolicies (['ADMIN']), verifyRequiredBody(["title", "description", "price", "code", "category"]), uploader.single('thumbnail'), async (req,res)=>{
     try{

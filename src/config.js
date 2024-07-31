@@ -39,7 +39,8 @@ const config = {
     GITHUB_CALLBACK_URL: process.env.GITHUB_CALLBACK_URL,
     PERSISTENCE: process.env.PERSISTENCE || 'mongo',
     GMAIL_APP_USER: process.env.GMAIL_APP_USER,
-    GMAIL_APP_PASS: process.env.GMAIL_APP_PASS
+    GMAIL_APP_PASS: process.env.GMAIL_APP_PASS,
+    MODE: 'dev'
 };
 
 

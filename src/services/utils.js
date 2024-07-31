@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import config, {errorsDictionary} from '../config.js';
 import { faker } from '@faker-js/faker';
 import CustomError from './CustomError.class.js';
+import addLogger from './logger.js';
 
 
 export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
@@ -51,16 +52,17 @@ export const verifyRequiredBody = (requiredFields) =>{
 };
 
 
-export const verifyMongoDBId = (id) => {
-    return (req, res, next) => {
-        if (!config.MONGODB_ID_REGEX.test(req.params.id)) {
-            throw new CustomError(errorsDictionary.INVALID_MONGOID_FORMAT)
-            //return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
-        }
+// export const verifyMongoDBId = (pid) => {
+//     return (req, res, next) => {
+//         if (!config.MONGODB_ID_REGEX.test(pid)) {
+//             //req.logger.error(`El ID ${pid} no contiene un formato válido de MongoDB LOGGER`)
+//             throw new CustomError(errorsDictionary.INVALID_MONGOID_FORMAT)
+//             //return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
+//         }
     
-        next();
-    }
-}
+//         next();
+//     }
+// }
 
 
 //middleware para controlar si tiene session

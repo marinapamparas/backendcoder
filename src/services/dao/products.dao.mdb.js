@@ -12,6 +12,7 @@ class ProductsService {
             return product;
             
         } catch (error) {          
+            
             throw new CustomError(errorsDictionary.ID_NOT_FOUND)
         }
     };
