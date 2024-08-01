@@ -1,0 +1,2 @@
+{"level":"http","message":"Method GET - /api/products/sfhaeth"}
+{"level":"error","message":"El ID no contiene un formato válido de MongoDB LOGGER"}

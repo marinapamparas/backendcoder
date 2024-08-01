@@ -16,7 +16,7 @@ const customLevelOptions = {
         error: 'red',
         warning: 'yellow',
         info: 'blue',
-        http: 'grey',
+        http: 'black',
         debug: 'white'
     }
 }
@@ -42,7 +42,7 @@ const prodLogger = winston.createLogger({
                 winston.format.simple()
             )
          }),
-        new winston.transports.File({ level: 'info', filename: `${config.DIRNAME}/logs/errors.log`})
+        new winston.transports.File({ level: 'http', filename: `${config.DIRNAME}/logs/errors.log`})
     ]
 });
 

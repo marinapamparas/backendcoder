@@ -14,7 +14,8 @@ export const isValidPassword = async (user, password) => {
     try {
       return await bcrypt.compare(password, user.password);
     } catch (error) {
-      console.error('Error comparing passwords:', error);
+        logger.error(`Error comparing passwords: ${error}`)
+        //console.error('Error comparing passwords:', error);
       return false;
     }
   };
@@ -29,11 +30,17 @@ export const verifyToken = (req, res, next) => {
     const queryToken = req.query.access_token ? req.query.access_token: undefined;
     const receivedToken = headerToken || cookieToken || queryToken;
 
-    if (!receivedToken) throw new CustomError(errorsDictionary.INVALID_AUTENTICATION) //return res.status(401).send({ origin: config.SERVER, payload: 'Se requiere token' });
+    if (!receivedToken) {
+        logger.error(`Autenticacion de usuario fallida`)
+        throw new CustomError(errorsDictionary.INVALID_AUTENTICATION) 
+    }//return res.status(401).send({ origin: config.SERVER, payload: 'Se requiere token' });
 
     jwt.verify(receivedToken, config.SECRET, (err, payload) => {
         
-        if (err) throw new CustomError(errorsDictionary.INVALID_AUTENTICATION)
+        if (err) {
+            logger.error(`Autenticacion de usuario fallida`)
+            throw new CustomError(errorsDictionary.INVALID_AUTENTICATION)
+        }
             //return res.status(403).send({ origin: config.SERVER, payload: 'Token no válido' });
         req.user = payload;
         next();
@@ -45,7 +52,10 @@ export const verifyRequiredBody = (requiredFields) =>{
     return (req, res, next) => {
         const allOk = requiredFields.every ( field =>
             req.body.hasOwnProperty(field) && req.body[field] !== '' && req.body[field] !== null && req.body[field] !== undefined);
-        if (!allOk) throw new CustomError(errorsDictionary.FEW_PARAMETERS)
+        if (!allOk) {
+            logger.error(`Faltan parámetros obligatorios o se enviaron vacíos, se requiere: ${requiredFields}`)
+            throw new CustomError(errorsDictionary.FEW_PARAMETERS)
+        };
             //return res.status(400).send({origin: config.SERVER, payload: 'Faltan propiedades', requiredFields});
         next();
     };
@@ -55,7 +65,7 @@ export const verifyRequiredBody = (requiredFields) =>{
 export const verifyMongoDBId = (pid) => {
     return (req, res, next) => {
         if (!config.MONGODB_ID_REGEX.test(pid)) {
-            logger.error(`El ID no contiene un formato válido de MongoDB LOGGER`)
+            logger.error(`El ID no contiene un formato válido de MongoDB`)
             throw new CustomError(errorsDictionary.INVALID_MONGOID_FORMAT)
             //return res.status(400).send({ origin: config.SERVER, payload: null, error: 'Id no válido' });
         }
@@ -87,10 +97,15 @@ export const handlePolicies = policies => {
         try{
             if (policies[0]=== "PUBLIC") return next();
 
-            if(!req.user) throw new CustomError(errorsDictionary.INVALID_AUTENTICATION);
+            if(!req.user){
+                logger.error(`Usuario no autenticado`);
+                throw new CustomError(errorsDictionary.INVALID_AUTENTICATION);
+            }    
 
             if(!policies.includes(req.user._doc.role)) return next();
             
+            logger.error(`Usuario no autorizado`);
+
             throw new CustomError(errorsDictionary.INVALID_AUTHORIZATION);
 
         } catch (error){
