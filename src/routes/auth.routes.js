@@ -3,7 +3,7 @@ import config from "../config.js";
 //import UsersManager from "../controllers/UsersManagerMongoDB.js";
 import UsersManager from "../controllers/users.manager.js";
 import session from "express-session";
-import { handlePolicies, verifyRequiredBody, createToken, verifyToken } from "../services/utils.js";
+import { handlePolicies, verifyRequiredBody, createToken, verifyToken, isValidPassword, createHash } from "../services/utils.js";
 import initAuthStrategies, { passportCall } from "../services/auth/passport.strategies.js";
 import passport from "passport";
 import nodemailer from "nodemailer";
@@ -39,6 +39,10 @@ auth.get('/current', passport.authenticate('current', { failureRedirect: `/curre
 auth.post('/jwtlogin', verifyRequiredBody(['email', 'password']), passport.authenticate('login', { failureRedirect: `/login?error=${encodeURI('Usuario o clave no válidos')}`}), async (req, res) => {
     try {
         const token = createToken(req.user, '1h');
+        // console.log("req.user", req.user)
+        // const user = await UMMDB.autenticationUser("marpamparas@gmail.com", "")
+        // console.log("user", user)
+        
         const date = moment().format('DD-MM-YYYY HH:mm:ss');
         
         res.cookie(`${config.APP_NAME}_cookie`, token, { maxAge: 60 * 60 * 1000, httpOnly: true });
@@ -108,6 +112,74 @@ auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'p
         res.status(500).send({origin:config.SERVER, payload:null, error: err.messages})
     }
 });
+
+auth.post('/restorepassword', async (req, res) => {
+    try{
+        
+        const email = req.body.email
+       
+        const user = await UMMDB.autenticationUser(email, "")
+        
+        if(user){
+
+            const { _id, _cart_id, ...filteredFoundUser } = user;
+           
+            const token = createToken(filteredFoundUser, '1h');
+
+            
+            res.cookie(`${config.APP_NAME}_cookie`, token, { maxAge: 60 * 60 * 1000, httpOnly: true });
+
+
+            await transport.sendMail({
+                from: `no-reply <${config.GMAIL_APP_USER}>`, 
+                to: `${user.email}`,
+                subject: 'Recupero de contraseña',
+                html: `<div><h2>¿Olvidaste tu contraseña?</h2><h3>Para restaurarla ingresa a este link:</h3><p>http://localhost:8080/api/views/restore?temp_token=${token}</p><br><p>por favor no responder este mail, es automático</p></div>`
+                
+            });
+            res.redirect('/api/views/emailrecoverysend')
+
+        }else{
+            res.redirect('/api/views/passwordrecovery');
+
+        }
+
+
+
+
+        
+    } catch (err){
+        
+        res.status(500).send({origin:config.SERVER, payload:null, error: err.messages})
+    }
+})
+
+auth.post('/restorepassword2', verifyToken, async (req, res) => {
+    try{
+
+        if(!verifyToken){
+            res.redirect('/api/views/passwordrecovery')
+        }
+        const user = req.user._doc
+        const password = req.body.password
+        const repeatPassword = req.body.repeatPassword
+        
+        if(password === repeatPassword){
+            
+            if (await isValidPassword(user, password) === false){
+                const newPassword = createHash(password)
+                await UMMDB.update(user._id, {"password": newPassword})
+                res.status(200).send({origin:config.SERVER, payload: "La contraseña ha sido modificada exitosamente"})
+            } else {
+                res.status(400).send({origin:config.SERVER, payload:"La contraseña ingresada no puede ser igual a la que tenías previamente."})
+            }
+        }
+        
+    } catch (err){
+        console.log(err)
+        res.status(500).send({origin:config.SERVER, payload:null, error: err.messages})
+    }
+})
 
 auth.get('/logout', async (req, res) => {
     try{

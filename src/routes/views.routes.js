@@ -152,5 +152,43 @@ views.get('/profile', async (req,res)=>{
     }
 });
 
+views.get('/passwordrecovery', async (req,res)=>{
 
+    try{
+        
+        res.status(200).render('passwordrecovery', {});
+    
+    }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        console.error('Error cargar el chat', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+
+views.get('/emailrecoverysend', async (req,res)=>{
+
+    try{
+        
+        res.status(200).render('emailrecoverysend', {});
+    
+    }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        console.error('Error cargar el chat', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+
+
+views.get('/restore', async (req,res)=>{
+
+    try{
+        
+        res.status(200).render('restore', {});
+    
+    }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        console.error('Error cargar el chat', error);
+        res.status(500).send('Error del servidor');
+    }
+});
 export default views;

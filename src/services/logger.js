@@ -17,7 +17,7 @@ const customLevelOptions = {
         warning: 'yellow',
         info: 'blue',
         http: 'black',
-        debug: 'white'
+        debug: 'white' 
     }
 }
 //muestra desde debug hacia arriba
