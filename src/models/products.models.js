@@ -15,6 +15,7 @@ const schema = new mongoose.Schema({
     stock: { type: Number, default: 0 },
     status: { type: Boolean, required: true },
     category: { type: String, required: true },
+    owner: { type: String, default: "ADMIN" }
 
 });
 

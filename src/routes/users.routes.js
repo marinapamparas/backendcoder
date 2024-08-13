@@ -1,5 +1,5 @@
 import { Router } from "express";
-
+import { verifyToken } from "../services/utils.js";
 //import  UsersManager  from "../controllers/UsersManagerMongoDB.js";
 import UsersManager from "../controllers/users.manager.js";
 
@@ -23,6 +23,26 @@ users.get('/:uid', async (req,res)=>{
     }
 });
 
+users.put('/premium/:uid', async (req,res)=>{
+    try{ 
+        const userId = req.params.uid
+        
+        const user = await UMMDB.getOne(userId)
+
+        const role = user.role
+       
+        if(role === "USER"){
+            await UMMDB.update(userId, { "role" : "PREMIUM"})
+        } else{
+            await UMMDB.update(userId, { "role" : "USER"})
+        }       
+        res.status(200).send({payload: "Cambiaste de rol exitosamente"})
+
+    }catch (error){
+        console.error('Error, the user doesnt exists:', error);
+        res.status(500).send('Server error');
+    }
+});
 
 users.post('/createUser', async (req,res)=>{
     try{

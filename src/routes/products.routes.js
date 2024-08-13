@@ -116,16 +116,19 @@ products.get('/:pid', async (req,res)=>{
 
 // 
 
-products.post('/', handlePolicies (['ADMIN']), verifyRequiredBody(["title", "description", "price", "code", "category"]), uploader.single('thumbnail'), async (req,res)=>{
+products.post('/', handlePolicies (['ADMIN', 'PREMIUM']), verifyRequiredBody(["title", "description", "price", "code", "category"]), uploader.single('thumbnail'), async (req,res)=>{
     try{
         
         // Obtenemos la instancia global del objeto socketServer
         const socketServer = req.app.get('socketServer');
         
+        const owner = { owner : req.user._doc.email }
 
         const productData = req.body;
 
-        const addProduct = await PMMDB.add(productData)           
+        const product = owner + productData
+
+        const addProduct = await PMMDB.add(product)           
 
         res.status(200).send({payload: addProduct})
 
