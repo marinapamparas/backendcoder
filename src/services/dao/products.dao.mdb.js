@@ -81,9 +81,11 @@ class ProductsService {
     add = async (newData) => {
         try {
             const product = new modelProducts(newData);
+            
             await product.save();
             return product;
         } catch (error) {
+            logger.error(error);
             throw new CustomError(errorsDictionary.RECORD_CREATION_ERROR);
         }
     };

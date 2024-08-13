@@ -39,8 +39,8 @@ auth.get('/current', passport.authenticate('current', { failureRedirect: `/curre
 auth.post('/jwtlogin', verifyRequiredBody(['email', 'password']), passport.authenticate('login', { failureRedirect: `/login?error=${encodeURI('Usuario o clave no válidos')}`}), async (req, res) => {
     try {
         const token = createToken(req.user, '1h');
-        //console.log("token", token)
-        // const user = await UMMDB.autenticationUser("marpamparas@gmail.com", "")
+        console.log("token", token)
+        // const user = await UMMDB.autenticationUser(auth"marpamparas@gmail.com", "")
         // console.log("user", user)
         
         const date = moment().format('DD-MM-YYYY HH:mm:ss');

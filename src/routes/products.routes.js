@@ -116,21 +116,20 @@ products.get('/:pid', async (req,res)=>{
 
 // 
 
-products.post('/', handlePolicies (['ADMIN', 'PREMIUM']), verifyRequiredBody(["title", "description", "price", "code", "category"]), uploader.single('thumbnail'), async (req,res)=>{
+products.post('/', handlePolicies (['ADMIN', 'PREMIUM']), verifyRequiredBody(["title", "description", "price", "code", "category", "status"]), uploader.single('thumbnail'), async (req,res)=>{
     try{
         
         // Obtenemos la instancia global del objeto socketServer
         const socketServer = req.app.get('socketServer');
         
-        const owner = { owner : req.user._doc.email }
-
+        
         const productData = req.body;
-
-        const product = owner + productData
-
-        const addProduct = await PMMDB.add(product)           
-
-        res.status(200).send({payload: addProduct})
+        
+        const product = { ...productData, owner: req.user._doc.email };
+        
+        const added = await PMMDB.add(product)           
+        
+        res.status(200).send({payload: "Se creo el producto exitosamente"})
 
         //emito el evento productsChanged
         socketServer.emit('productsChanged', 'Se cargo un nuevo producto' );

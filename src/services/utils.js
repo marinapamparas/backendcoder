@@ -31,14 +31,14 @@ export const verifyToken = (req, res, next) => {
     const receivedToken = headerToken || cookieToken || queryToken;
 
     if (!receivedToken) {
-        logger.error(`Autenticacion de usuario fallida`)
+        logger.error(`Autenticacion de usuario fallida: ${err.message}`)
         throw new CustomError(errorsDictionary.INVALID_AUTENTICATION) 
     }//return res.status(401).send({ origin: config.SERVER, payload: 'Se requiere token' });
 
     jwt.verify(receivedToken, config.SECRET, (err, payload) => {
         
         if (err) {
-            logger.error(`Autenticacion de usuario fallida`)
+            logger.error(`Autenticacion de usuario fallida: ${err.message}`)
             throw new CustomError(errorsDictionary.INVALID_AUTENTICATION)
         }
             //return res.status(403).send({ origin: config.SERVER, payload: 'Token no válido' });
@@ -101,8 +101,8 @@ export const handlePolicies = policies => {
                 logger.error(`Usuario no autenticado`);
                 throw new CustomError(errorsDictionary.INVALID_AUTENTICATION);
             }    
-
-            if(!policies.includes(req.user._doc.role)) return next();
+           
+            if(policies.includes(req.user._doc.role)) return next();
             
             logger.error(`Usuario no autorizado`);
 
