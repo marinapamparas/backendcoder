@@ -63,7 +63,7 @@ carts.post('/', async (req,res)=>{
 
 });
 //handlePolicies (['USER']),
-carts.post('/:cid/product/:pid', async (req,res)=>{
+carts.post('/:cid/product/:pid', verifyToken, async (req,res)=>{
     try{
         const cid= req.params.cid;
         const pid= req.params.pid;
