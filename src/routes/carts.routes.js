@@ -2,8 +2,11 @@ import { Router } from "express";
 //import { CartManager } from "../dao/CartManager.js";
 //import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
 import CartsManager from '../controllers/carts.manager.js';
-import { handlePolicies } from "../services/utils.js";
+import { handlePolicies, verifyToken } from "../services/utils.js";
 import passport from "passport";
+import { checkOwnership } from "./products.routes.js";
+import config, {errorsDictionary} from "../config.js";
+import CustomError from "../services/CustomError.class.js";
 
 
 const carts = Router();
@@ -60,14 +63,25 @@ carts.post('/', async (req,res)=>{
 
 });
 //handlePolicies (['USER']),
-carts.post('/:cid/product/:pid',  (req,res)=>{
+carts.post('/:cid/product/:pid', async (req,res)=>{
     try{
         const cid= req.params.cid;
         const pid= req.params.pid;
+        const email = req.user._doc.email; 
         
-        CMMDB.addProduct(cid, pid)
+        let dontAddProduct = true;
+        if (req.user._doc.role === 'PREMIUM') dontAddProduct = await checkOwnership(pid, email);
 
-        res.status(200).send('Success')
+        if (dontAddProduct) {
+           
+            res.status(200).send({ origin: config.SERVER, payload: 'No puede cargar este producto a su carrito porque le pertenece' });
+
+        } else {
+
+            await CMMDB.addProduct(cid, pid)
+
+            res.status(200).send({ origin: config.SERVER, payload: 'Producto agregado al carrito exitosamente' });
+        }
 
     }catch (error){
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)

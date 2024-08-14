@@ -26,9 +26,7 @@ export const createToken = (payload, duration) => jwt.sign(payload, config.SECRE
 //verificamos que haya un token en header, cookie o por query:
 export const verifyToken = (req, res, next) => {
     const headerToken = req.headers.authorization ? req.headers.authorization.split(' ')[1]: undefined;
-    console.log("headerToken en utils verifyToken",headerToken)
     const cookieToken = req.cookies && req.cookies[`${config.APP_NAME}_cookie`] ? req.cookies[`${config.APP_NAME}_cookie`]: undefined;
-    console.log("cookieToken en utils verifyToken", cookieToken)
     const queryToken = req.query.access_token ? req.query.access_token: undefined;
     const receivedToken = headerToken || cookieToken || queryToken;
 

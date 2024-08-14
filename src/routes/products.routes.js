@@ -247,8 +247,6 @@ products.delete('/:pid', verifyToken, handlePolicies (['ADMIN', 'PREMIUM']), asy
             res.status(200).send({ origin: config.SERVER, payload: 'No tiene permisos para borrar el producto' });
         }
 
-
-
     }catch (error){
         
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
