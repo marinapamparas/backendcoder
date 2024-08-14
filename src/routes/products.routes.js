@@ -4,7 +4,7 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
-import { handlePolicies, generateFakeProducts, verifyRequiredBody, verifyMongoDBId } from "../services/utils.js";
+import { handlePolicies, generateFakeProducts, verifyRequiredBody, verifyMongoDBId, verifyToken } from "../services/utils.js";
 import config, {errorsDictionary} from "../config.js";
 import CustomError from "../services/CustomError.class.js";
 
@@ -17,6 +17,15 @@ const PMMDB = new ProductsManager()
 const io = initSocket();
 
 products.param('pid', verifyMongoDBId())
+
+
+export const checkOwnership = async (pid, email) => {
+    const product = await PMMDB.getOne(pid);
+    if (!product) return false;
+    return product.owner === email;
+}
+
+
 
 // products.param('pid', async (req, res, next, pid) =>{
     
@@ -172,17 +181,28 @@ products.post('/', handlePolicies (['ADMIN', 'PREMIUM']), verifyRequiredBody(["t
 //     }
 // });
 
-products.put('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
+products.put('/:pid', verifyToken, handlePolicies (['ADMIN', 'PREMIUM']), async (req,res)=>{
     try{
         const pid = req.params.pid;
         
         const updateRequest = req.body;
-        
+        const email = req.user._doc.email;
         const options = {new : true};
 
-        const update = await PMMDB.update(pid, updateRequest, options)
+        let proceedWithUpdate = true;
+        if (req.user._doc.role === 'PREMIUM') proceedWithUpdate = await checkOwnership(pid, email);
 
-        res.status(200).send(update)
+
+        if (proceedWithUpdate) {
+            // Ejecutar llamada a método para modificar el producto
+            await PMMDB.update(pid, updateRequest, options)
+          
+            res.status(200).send({ origin: config.SERVER, payload: 'Producto modificado' });
+        } else {
+            res.status(200).send({ origin: config.SERVER, payload: 'No tiene permisos para modificar el producto' });
+        }
+
+        
     
     }catch (error){
         
@@ -206,17 +226,28 @@ products.put('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
 //     }
 // });
 
-products.delete('/:pid', handlePolicies (['ADMIN']), async (req,res)=>{
+products.delete('/:pid', handlePolicies (['ADMIN', 'PREMIUM']), async (req,res)=>{
     try{
         // Obtenemos la instancia global del objeto socketServer
         const socketServer = req.app.get('socketServer');
 
         const pid = req.params.pid;
-        const productsId = await PMMDB.delete(pid)
-        res.status(200).send({payload: productsId})
+        const email = req.user._doc.email;
+        let proceedWithDelete = true;
+        if (req.user._doc.role === 'PREMIUM') proceedWithDelete = await checkOwnership(pid, email);
 
-        //emito el evento productsChanged
-        socketServer.emit('productsChanged', 'Se elimino un producto' );
+        if (proceedWithDelete) {
+            // Ejecutar llamada a método para borrar producto
+            await PMMDB.delete(pid)
+            //emito el evento productsChanged
+            socketServer.emit('productsChanged', 'Se elimino un producto' );
+
+            res.status(200).send({ origin: config.SERVER, payload: 'Producto borrado' });
+        } else {
+            res.status(200).send({ origin: config.SERVER, payload: 'No tiene permisos para borrar el producto' });
+        }
+
+
 
     }catch (error){
         
