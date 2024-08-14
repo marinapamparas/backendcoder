@@ -226,7 +226,7 @@ products.put('/:pid', verifyToken, handlePolicies (['ADMIN', 'PREMIUM']), async 
 //     }
 // });
 
-products.delete('/:pid', handlePolicies (['ADMIN', 'PREMIUM']), async (req,res)=>{
+products.delete('/:pid', verifyToken, handlePolicies (['ADMIN', 'PREMIUM']), async (req,res)=>{
     try{
         // Obtenemos la instancia global del objeto socketServer
         const socketServer = req.app.get('socketServer');
