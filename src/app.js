@@ -18,6 +18,8 @@ import MongoSingleton from './services/mongo.singleton.js';
 import cors from 'cors';
 import errorsHandler from './services/errors.handler.js';
 import { logger, addLogger } from './services/logger.js';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
 import cluster from 'cluster';
 import { cpus } from 'os';
 
@@ -64,12 +66,29 @@ import { cpus } from 'os';
     app.use('/api/users', users);
     app.use('/api/auth', auth);
     app.use('/api/test', test);
+
     app.use(errorsHandler);
     
+
     //app.use('/api/test', new TestRouter().getRouter());
     //la parte estatica que se muestra:
-    // app.use('/', express.static('src/public'));
+    app.use('/', express.static('src/public'));
+    
+    // Generamos objeto base config Swagger y levantamos endpoint para servir la documentación
+    const swaggerOptions = {
+        definition: {
+            openapi: '3.0.1',
+            info: {
+                title: 'Documentación',
+                description: 'Esta documentación cubre toda la API habilitada para Pamparas - Ecommerce',
+                version: '1.0.0'
+            },
+        },
+        apis: ['src/docs/**/*.yaml'], // todos los archivos de configuración de rutas estarán aquí
+    };
 
+    const specs = swaggerJSDoc(swaggerOptions);
+    app.use('/api/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
     //Escucha Http
     const expressInstance = app.listen(config.PORT, async () => {

@@ -1,0 +1,178 @@
+openapi: 3.0.1
+info:
+  title: E-commerce API - Products
+  description: API para gestionar productos en una tienda de e-commerce
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor local
+
+paths:
+  /products/mockingproducts:
+    get:
+      summary: Crear un mock de 100 productos falsos
+      responses:
+        '200':
+          description: Mock de productos creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+
+  /products:
+    get:
+      summary: Obtener todos los productos paginados
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: sort
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de productos paginados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+
+    post:
+      summary: Crear un nuevo producto
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Información del producto a crear
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Producto creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /products/{pid}:
+    get:
+      summary: Obtener un producto por ID
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Información del producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+    put:
+      summary: Actualizar un producto por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Información del producto a actualizar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Producto actualizado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+    delete:
+      summary: Eliminar un producto por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Producto eliminado exitosamente
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Producto Ejemplo"
+        description:
+          type: string
+          example: "Descripción del producto"
+        price:
+          type: number
+          format: float
+          example: 19.99
+        thumbnail:
+          type: array
+          items:
+            type: string
+          example: ["image1.jpg", "image2.jpg"]
+        code:
+          type: integer
+          example: 123456
+        stock:
+          type: integer
+          example: 100
+        status:
+          type: boolean
+          example: true
+        category:
+          type: string
+          example: "Electrónica"
+        owner:
+          type: string
+          example: "ADMIN"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

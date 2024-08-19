@@ -18,14 +18,11 @@ const io = initSocket();
 
 products.param('pid', verifyMongoDBId())
 
-
 export const checkOwnership = async (pid, email) => {
     const product = await PMMDB.getOne(pid);
     if (!product) return false;
     return product.owner === email;
 }
-
-
 
 // products.param('pid', async (req, res, next, pid) =>{
     
@@ -253,7 +250,6 @@ products.delete('/:pid', verifyToken, handlePolicies (['ADMIN', 'PREMIUM']), asy
     }
 });
 
-
 //DELETE WITH FILE SYSTEM
 // products.delete('/:pid', async (req,res)=>{
 //     try{
@@ -277,13 +273,6 @@ products.all('*', async(req,res)=>{
     throw new CustomError(errorsDictionary.ROUTING_ERROR)
     //res.status(404).send({ origin: config.SERVER, payload: null, error: 'No se encuentra la ruta solicitada'});
 });
-
-
-
-
-
-
-
 
 
 export default products;

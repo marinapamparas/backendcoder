@@ -1,0 +1,186 @@
+openapi: 3.0.1
+info:
+  title: E-commerce API - Carts
+  description: API para gestionar carritos de compras en la tienda de e-commerce
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor local
+
+paths:
+  /carts/{cid}:
+    get:
+      summary: Obtener un carrito por ID
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Información del carrito
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: Carrito no encontrado
+
+    delete:
+      summary: Eliminar un carrito por ID
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Carrito eliminado exitosamente
+        '404':
+          description: Carrito no encontrado
+
+  /carts/{cid}/purchase:
+    get:
+      summary: Verificar la compra y generar el ticket
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Compra verificada y ticket generado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ticket:
+                    type: string
+                    example: "Ticket12345"
+        '400':
+          description: Error en la compra
+
+  /carts:
+    post:
+      summary: Crear un nuevo carrito
+      responses:
+        '201':
+          description: Carrito creado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /carts/{cid}/product/{pid}:
+    post:
+      summary: Agregar un producto a un carrito
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Información del producto a agregar
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Producto agregado exitosamente al carrito
+        '400':
+          description: Error al agregar el producto
+        '403':
+          description: Usuario PREMIUM no puede agregar su propio producto
+
+    delete:
+      summary: Eliminar un producto de un carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Producto eliminado del carrito exitosamente
+        '404':
+          description: Carrito o producto no encontrado
+
+  /carts/{cid}/product/{pid}/{qty}:
+    put:
+      summary: Modificar la cantidad de un producto en un carrito
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: qty
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cantidad de producto modificada exitosamente
+        '400':
+          description: Error al modificar la cantidad
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "cart12345"
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: "product12345"
+              quantity:
+                type: integer
+                example: 1
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
