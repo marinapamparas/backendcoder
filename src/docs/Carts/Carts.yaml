@@ -8,7 +8,7 @@ servers:
     description: Servidor local
 
 paths:
-  /carts/{cid}:
+  /api/carts/{cid}:
     get:
       summary: Obtener un carrito por ID
       parameters:
@@ -27,7 +27,7 @@ paths:
         '404':
           description: Carrito no encontrado
 
-    delete:
+    /api/carts/delete:
       summary: Eliminar un carrito por ID
       parameters:
         - name: cid
@@ -41,7 +41,7 @@ paths:
         '404':
           description: Carrito no encontrado
 
-  /carts/{cid}/purchase:
+  /api/carts/{cid}/purchase:
     get:
       summary: Verificar la compra y generar el ticket
       parameters:
@@ -69,7 +69,7 @@ paths:
         '400':
           description: Error en la compra
 
-  /carts:
+  /api/carts/:
     post:
       summary: Crear un nuevo carrito
       responses:
@@ -80,7 +80,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Cart'
 
-  /carts/{cid}/product/{pid}:
+  /api/carts/{cid}/product/{pid}:
     post:
       summary: Agregar un producto a un carrito
       security:
@@ -134,7 +134,7 @@ paths:
         '404':
           description: Carrito o producto no encontrado
 
-  /carts/{cid}/product/{pid}/{qty}:
+  /api/carts/{cid}/product/{pid}/{qty}:
     put:
       summary: Modificar la cantidad de un producto en un carrito
       parameters:

@@ -8,7 +8,7 @@ servers:
     description: Servidor local
 
 paths:
-  /products/mockingproducts:
+  /api/products/mockingproducts:
     get:
       summary: Crear un mock de 100 productos falsos
       responses:
@@ -21,7 +21,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Product'
 
-  /products:
+  /api/products/:
     get:
       summary: Obtener todos los productos paginados
       parameters:
@@ -79,7 +79,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Product'
 
-  /products/{pid}:
+  /api/products/{pid}:
     get:
       summary: Obtener un producto por ID
       parameters:
