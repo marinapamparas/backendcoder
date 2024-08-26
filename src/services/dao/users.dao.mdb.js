@@ -3,6 +3,8 @@ import { isValidPassword } from "../utils.js";
 //import { CartManagerMongoDb } from '../controllers/CartManagerMongoDb.js';
 import CartsManager from '../../controllers/carts.manager.js';
 import { createHash } from '../utils.js';
+import { errorsDictionary } from '../../config.js';
+import CustomError from '../CustomError.class.js';
 
 
 const CMMDB = new CartsManager();
@@ -18,7 +20,8 @@ class UsersService {
             const emailVerification = await modelUsers.findOne({ email: newData.email });
             
             if(emailVerification){
-                console.log('El mail ya esta registrado')
+                //throw new CustomError(errorsDictionary.RECORD_CREATION_NOT_OK)
+                console.error('El mail ya esta registrado')
                 return;
             }
             
@@ -39,6 +42,7 @@ class UsersService {
             return newUser;
 
         } catch (error) {
+            
             console.error('Error al crear el user:', error);
         }
     };

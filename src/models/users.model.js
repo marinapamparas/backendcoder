@@ -3,7 +3,7 @@ import modelCarts from './carts.models.js';
 
 mongoose.pluralize(null);
 
-const collection = 'users';
+const collection = 'users_test';
 const db = mongoose.connection.useDb('ecommerce')
 const schema = new mongoose.Schema({
 

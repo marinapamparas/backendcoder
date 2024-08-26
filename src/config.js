@@ -61,7 +61,8 @@ export const errorsDictionary = {
     INVALID_AUTHORIZATION: {code:13, status:403, message: 'Usuario no autorizado'},
     INVALID_SEARCH: {code:14, status:400, message: 'No se pudieron recuperar los registros'},
     RECORD_UPDATE_ERROR: { code: 15, status: 500, message: 'Error al intentar modificar el registro' },
-    RECORD_DELETE_ERROR: { code: 16, status: 500, message: 'Error al intentar eliminar el registro' }
+    RECORD_DELETE_ERROR: { code: 16, status: 500, message: 'Error al intentar eliminar el registro' },
+    RECORD_CREATION_NOT_OK: { code: 17, status: 400, message: 'El email que ingresaste ya esta registrado' },
 }
 
 
