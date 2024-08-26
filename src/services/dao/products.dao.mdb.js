@@ -30,32 +30,36 @@ class ProductsService {
             
             };
             
+            // // Check if queryHtml is defined and not empty
+            
+            // if (!queryHtml || queryHtml === '') {
+            
+            // const products = await modelProducts.paginate({}, options);
+            
+            // return products;
+            // // return await modelProducts.paginate({}, options); // Find all products if queryHtml is invalid
+            
+            // }
+            
+            
+            
+            // // Parse queryHtml
+            
+            // const queryFilter = JSON.parse(queryHtml);
             // Check if queryHtml is defined and not empty
-            
-            if (!queryHtml || queryHtml.trim() === '') {
-            
-            const products = await modelProducts.paginate({}, options);
-            
-            return products;
-            // return await modelProducts.paginate({}, options); // Find all products if queryHtml is invalid
-            
+            let queryFilter = {};
+            if (typeof queryHtml === 'string' && queryHtml.trim() !== '') {
+                // Parse queryHtml if it's a string
+                try {
+                    queryFilter = JSON.parse(queryHtml);
+                } catch (error) {
+                    console.error('Invalid JSON format:', queryHtml);
+                    throw new CustomError(errorsDictionary.INVALID_SEARCH);
+                }
+            } else if (typeof queryHtml === 'object' && queryHtml !== null) {
+                // Use queryHtml directly if it's an object
+                queryFilter = queryHtml;
             }
-            
-            // // Valida formato queryHtml
-            
-            if (validateQueryHtmlFormat && !validateQueryHtmlFormat(queryHtml)) {
-            
-            console.error('Invalid queryHtml format');
-            
-            //en caso de no ser valido el formato
-            
-            return;
-            
-            }
-            
-            // Parse queryHtml
-            
-            const queryFilter = JSON.parse(queryHtml);
             
             // Aplicar sort
             
@@ -72,6 +76,7 @@ class ProductsService {
             return products;
             
         } catch (error) {
+            console.error('Error en getPaginated:', error);
             throw new CustomError(errorsDictionary.INVALID_SEARCH);
         }
             
@@ -101,8 +106,9 @@ class ProductsService {
 
     delete = async (filter) => {
         try {
-            await modelProducts.findByIdAndDelete(filter);
+            const product = await modelProducts.findByIdAndDelete(filter);
             console.log('Producto eliminado correctamente');
+            return product;
         } catch (error) {
             throw new CustomError(errorsDictionary.RECORD_DELETE_ERROR);
         }
