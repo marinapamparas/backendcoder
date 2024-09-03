@@ -142,12 +142,15 @@ views.get('/register', async (req,res)=>{
 views.get('/profile', async (req,res)=>{
 
     try{
+        
         if(!req.user) return res.redirect('/api/views/login');
-        res.status(200).render('profile', { user: req.user });
+        const user = req.user._doc ? req.user._doc : req.user
+
+        res.status(200).render('profile', { user: user });
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
-        console.error('Error cargar el chat', error);
+        //throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        console.error('Error:', error);
         res.status(500).send('Error del servidor');
     }
 });
@@ -184,6 +187,20 @@ views.get('/restore', async (req,res)=>{
     try{
         
         res.status(200).render('restore', {});
+    
+    }catch (error){
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        console.error('Error cargar el chat', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+
+
+views.get('/premiumDocs', async (req,res)=>{
+
+    try{
+        
+        res.status(200).render('premiumDocs', {});
     
     }catch (error){
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)

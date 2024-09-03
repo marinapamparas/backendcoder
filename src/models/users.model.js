@@ -3,8 +3,14 @@ import modelCarts from './carts.models.js';
 
 mongoose.pluralize(null);
 
-const collection = 'users_test';
+const collection = 'users';
 const db = mongoose.connection.useDb('ecommerce')
+
+const documentSchema = new mongoose.Schema({
+    name: { type: String }, 
+    reference: { type: String }
+});
+
 const schema = new mongoose.Schema({
 
     firstName: { type: String, required: true },
@@ -13,7 +19,9 @@ const schema = new mongoose.Schema({
     age: { type: Number, required: true },
     password: { type: String, required: true},
     _cart_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'carts' },
-    role: { type: String, enum: ['ADMIN', 'PREMIUM', 'USER'], default: 'USER'}
+    role: { type: String, enum: ['ADMIN', 'PREMIUM', 'USER'], default: 'USER'},
+    documents: [ documentSchema ],
+    last_connection: { type: Date, default: 2024 }
 });
 
 // Middleware de preconsulta para find y findOne

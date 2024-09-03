@@ -1,0 +1,173 @@
+<div class="container">
+    <div class="row">
+        <h2 class="espacio">Para volverte Premium necesitas cargar los siguientes documentos:</h2>
+        <ul>
+            <li id="identificacion" class="espacio docs">- Identificación:</li>
+            <form id="identificacionForm" method="POST" enctype="multipart/form-data" >
+                <input type="file" class="btn" name="documentsFiles" multiple>
+                <button type="submit" class="btn btn-primary">Cargar identificación</button>
+            </form>
+
+            <li id="domicilio" class="espacio docs">- Comprobante de domicilio:</li>
+            <form id="domicilioForm" method="POST" enctype="multipart/form-data" >
+                <input type="file" class="btn" name="documentsFiles" multiple>
+                <button type="submit" class="btn btn-primary">Cargar comprobante</button>
+            </form>
+
+            <li id="cuenta" class="espacio docs">- Comprobante de estado de cuenta:</li>
+            <form id="cuentaForm" method="POST" enctype="multipart/form-data" >
+                <input type="file" class="btn" name="documentsFiles" multiple>
+                <button type="submit" class="btn btn-primary">Cargar comprobante</button>
+            </form>
+
+        </ul>
+
+    </div>
+    <div class="row">
+
+        <p class="p">¿Terminaste de cargar todos los documentos necesarios?</p>
+        
+        <div class="col">
+        <form id="upgradeForm" method="post">
+        <button type="submit" class="btn btn-success">Click aquí para pasar a PREMIUM</button>
+        </form>
+        </div>
+
+        <div class="col">
+        <form action="/api/views/profile" method="get">
+        <button type="submit" class="btn btn-success">Volver a la sección anterior</button>
+        </form>
+        </div>
+    </div>
+      <!-- Modal -->
+    <div id="responseModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h5>Resultado de la Actualización</h5>
+            <div class="modal-body">
+                <!-- Mensaje se llenará dinámicamente -->
+            </div>
+            <button class="btn-close"></button>
+        </div>
+    </div>
+    
+</div>
+
+<style>
+    .p{
+        margin-top: 4%;
+        font-weight: 500;
+    }
+    .espacio{
+        margin: 2%;
+    }
+    .docs{
+        font-size: large;
+        font-weight: bold;
+    }
+    .tick {
+        color: green;
+        font-weight: bold;
+    }
+     .modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 1rem;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+    .modal-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .btn-close {
+        margin-top: 1rem;
+        padding: 0.5rem 1rem;
+        background-color: #ccc;
+        border: none;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.getElementById('identificacionForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        uploadDocument(this, 'identificacion');
+    });
+
+    document.getElementById('domicilioForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        uploadDocument(this, 'domicilio');
+    });
+
+    document.getElementById('cuentaForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        uploadDocument(this, 'cuenta');
+    });
+
+    function uploadDocument(form, docId) {
+        // Construir la URL dinámica
+        const actionUrl = `/api/users/${docId}/documents`;
+        const formData = new FormData(form);
+
+        fetch(actionUrl, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('Response:', response);
+            if (!response.ok) {
+                throw new Error('Error en la red');
+            }
+            return response.json();
+            })
+        .then(data => {
+            if (data.status === 'OK') {
+                document.getElementById(docId).innerHTML += ' <span class="tick">✔</span>';
+            } else {
+                alert('Error al subir el documento');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al subir el documento');
+        });
+    }
+
+
+    document.getElementById('upgradeForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    fetch(`/api/users/premium/:uid`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({})
+    })
+    .then(response => response.json())
+        .then(data => {
+            const modal = document.getElementById('responseModal');
+            const modalBody = modal.querySelector('.modal-body');
+            modalBody.textContent = data.payload;
+
+            // Mostrar el modal
+            modal.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const modal = document.getElementById('responseModal');
+            const modalBody = modal.querySelector('.modal-body');
+            modalBody.textContent = 'Hubo un error al actualizar el rol.';
+            modal.style.display = 'block';
+        });
+    });
+
+    document.querySelector('.btn-close').addEventListener('click', function() {
+        document.getElementById('responseModal').style.display = 'none';
+    });
+</script>

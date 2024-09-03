@@ -3,7 +3,7 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 mongoose.pluralize(null);
 
-const collection = 'products_test';
+const collection = 'products';
 const db = mongoose.connection.useDb('ecommerce')
 const schema = new mongoose.Schema({
 

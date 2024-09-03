@@ -27,10 +27,13 @@ const errorsHandler = (error, req, res, next) => {
     
     let customErr = errorsDictionary[0];
     for (const key in errorsDictionary) {
-        if (errorsDictionary[key].code === error.type.code) customErr = errorsDictionary[key];
+        if (errorsDictionary[key].code === error.type?.code) customErr = errorsDictionary[key];
+        break;
     }
+    const status = customErr?.status || 500; 
+    const message = customErr?.message || 'Internal Server Error'; 
     
-    return res.status(customErr.status).send({ origin: config.SERVER, payload: '', error: customErr.message });
+    return res.status(status).send({ origin: config.SERVER, payload: '', error: message });
 }
 
 export default errorsHandler;

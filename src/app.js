@@ -2,7 +2,8 @@ import express from 'express';
 import config from './config.js';
 import products from './routes/products.routes.js';
 import carts from './routes/carts.routes.js';
-import views from './routes/views.routes.js'
+import views from './routes/views.routes.js';
+import uploadRouter from './routes/uploads.routes.js';
 import handlebars from "express-handlebars";
 import initSocket from './services/sockets.js';
 import mongoose from 'mongoose';
@@ -66,9 +67,11 @@ import { cpus } from 'os';
     app.use('/api/users', users);
     app.use('/api/auth', auth);
     app.use('/api/test', test);
+    app.use('/api/uploads', uploadRouter);
 
     app.use(errorsHandler);
     
+
 
     //app.use('/api/test', new TestRouter().getRouter());
     //la parte estatica que se muestra:
@@ -103,6 +106,10 @@ import { cpus } from 'os';
     const socketServer = initSocket(expressInstance);
     app.set('socketServer', socketServer);
 
+
+ 
+    
+    
 
 // }
 
