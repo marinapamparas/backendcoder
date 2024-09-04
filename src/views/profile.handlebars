@@ -74,6 +74,9 @@
         text-decoration: none;
         cursor: pointer;
     }
+    .separacion{
+        margin-top: 5%;
+    }
 
     
 </style>
@@ -92,37 +95,49 @@
     <br>
     {{!-- <form action="/api/uploads/profile" method="POST" enctype="multipart/form-data"></form> --}}
     <form id="uploadForm" enctype="multipart/form-data">
+
             <div class="row espacio">
+                <p class="resaltar">Carga tu imagen de perfil desde acá:</p>
                 <div class="col">
                     <input type="file"  class="btn" name="profileImage" multiple>
                 </div>
                 <div class="col">
-                    <button type="submit" class="btn btn-success">Cargar una imágen de perfil</button>
+                    <button type="submit" class="btn btn-success">Cargar</button>
                 </div>
             </div>
     </form>
 
     
-    <br>
-    <br>
-    <br>
-    <br>
-    <div class="row espacio2">
-        <div class="col">
 
-        <p class="resaltar">¿Querés volverte Premium y vender tus propios productos?</p>
+    {{#if (eq user.role 'USER')}}
+        <div class="row espacio2">
+            <div class="col">
+
+            <p class="resaltar">¿Querés volverte Premium y vender tus propios productos?</p>
+            </div>
+            <div class="col">
+
+            <a href="/api/views/premiumDocs" class="resaltar"> Click aquí</a>
+            </div>
         </div>
-         <div class="col">
-
-        <a href="/api/views/premiumDocs" class="resaltar"> Click aquí</a>
-         </div>
-    </div>
-    <br>
-    <br>
-    <br>
-    <br>
-
-    <form action="/api/views/products" method="put">
+    {{/if}}
+    {{#if (eq user.role 'PREMIUM')}}
+        <form id="uploadProductForm" enctype="multipart/form-data">
+            <div class="row espacio2">
+                
+                <p class="resaltar">Carga las imagenes de tus productos desde acá:</p>
+                
+                <div class="col">
+                    <input type="file"  class="btn" name="productImages" multiple >
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-success">Cargar</button>
+                </div>
+            </div>
+        </form>    
+    {{/if}}
+    
+    <form action="/api/views/products" method="put" class="separacion">
         <button type="submit" class="btn btn-success">Volver a la sección de productos</button>
     </form>
 
@@ -167,6 +182,50 @@
         .catch(error => {
             console.error('Error:', error);
         });
+    });
+
+    // Cerrar el modal al hacer clic en la "x"
+    document.querySelector('.close').addEventListener('click', function() {
+        document.getElementById('myModal').style.display = "none";
+    });
+
+    // Cerrar el modal si el usuario hace clic fuera del contenido del modal
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('myModal');
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+
+
+       // Script para manejar la carga de imágenes de productos
+    document.getElementById('uploadProductForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Crear un objeto FormData
+        const formData = new FormData(this);
+
+        // Enviar la solicitud con Fetch API
+        fetch('/api/uploads/products', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+           
+            const modal = document.getElementById('myModal');
+            const modalText = document.getElementById('modalText');
+            modalText.innerText = data.payload
+            modal.style.display = "block";
+            
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const modal = document.getElementById('myModal');
+            const modalText = document.getElementById('modalText');
+            modalText.innerText = "Ocurrió un error al intentar cargar las imágenes.";
+            modal.style.display = "block";
+            });
     });
 
     // Cerrar el modal al hacer clic en la "x"

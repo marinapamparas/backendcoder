@@ -55,7 +55,16 @@ import { cpus } from 'os';
     }));
     
     //como aplicar handlebars en nuestra app, con estos metodos en app:
-    app.engine('handlebars', handlebars.engine());
+    
+    const hbs = handlebars.create({
+        helpers: {
+            eq: function (a, b) {
+                return a === b;
+            }
+        }
+    });
+
+    app.engine('handlebars', hbs.engine);
     app.set('views', `${config.DIRNAME}/views`);
     app.set ('view engine', 'handlebars');
     
