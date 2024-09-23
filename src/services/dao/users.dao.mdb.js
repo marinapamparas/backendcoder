@@ -56,6 +56,7 @@ class UsersService {
         }
     };
 
+
     autenticationUser = async (username, password) => {
         try {
 
@@ -88,7 +89,7 @@ class UsersService {
             const user = await modelUsers.find().lean();
             return user;
         } catch (error) {
-            console.error('Error al obtener los usuarios:', error);
+            console.error('Error al obtener todos los usuarios:', error);
         }
     };
 

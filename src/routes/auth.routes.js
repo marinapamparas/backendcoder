@@ -39,7 +39,7 @@ auth.get('/current', passport.authenticate('current', { failureRedirect: `/curre
 auth.post('/jwtlogin', verifyRequiredBody(['email', 'password']), passport.authenticate('login', { failureRedirect: `/login?error=${encodeURI('Usuario o clave no válidos')}`}), async (req, res) => {
     try {
         const token = createToken(req.user, '1h');
-        const date = moment().format('DD-MM-YYYY HH:mm:ss');
+        const date = moment().toDate();
         
         await UMMDB.update(req.user._doc._id, { last_connection: date });
 
@@ -50,7 +50,7 @@ auth.post('/jwtlogin', verifyRequiredBody(['email', 'password']), passport.authe
         //normalmente haria un redirect a otra plantilla de handlebars, pero para que funcione el supertest y reciba un payload y no un {} vacio, voy a comentar el redirect y dejar este res.status: 
         
         //res.status(200).send({ origin: config.SERVER, payload: 'El usuario se ha logueado exitosamente' })
-        res.redirect('/api/views/products');
+        res.redirect('/products');
 
     } catch (err) {
         res.status(500).send({ origin: config.SERVER, payload: null, error: err.message });
@@ -69,7 +69,7 @@ auth.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect: 
         
         res.cookie(`${config.APP_NAME}_cookie`, token, { maxAge: 60 * 60 * 1000, httpOnly: true });
 
-        res.redirect('/api/views/products');
+        res.redirect('/products');
         
         
     } catch (err) {
@@ -82,7 +82,12 @@ auth.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect: 
 auth.get('/ppprivate', passportCall('jwtlogin'), handlePolicies (['ADMIN', 'PREMIUM']), async (req, res) => {
     try{
         console.log(req.user._doc.role)
-        res.status(200).send({ origin: config.SERVER, payload: 'Bienvenido, tenes token con autorización!' })
+        if(req.user._doc.role === 'ADMIN' || req.user._doc.role === 'ADMIN' ){
+
+            res.status(200).send({ origin: config.SERVER, payload: 'Bienvenido, tenes token con autorización!' })
+        }else{
+            res.status(404).send({ origin: config.SERVER, payload: 'No tenes autorizacion' })
+        }
         // res.redirect ('/api/views/profile')
     } catch (err){
         res.status(500).send({origin:config.SERVER, payload:null, error: err.messages})
@@ -91,9 +96,9 @@ auth.get('/ppprivate', passportCall('jwtlogin'), handlePolicies (['ADMIN', 'PREM
 
 
 
-auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'password']),passport.authenticate('register', { failureRedirect: `http://localhost:8080/api/views/register?error=${encodeURI('No se pudo hacer el registro exitosamente')}`}), async (req, res) => {
+auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'password']),passport.authenticate('register', { failureRedirect: `http://localhost:8080/register?error=${encodeURI('No se pudo hacer el registro exitosamente')}`}), async (req, res) => {
     try{
-        const date = moment().format('DD-MM-YYYY HH:mm:ss');
+        const date = moment().toDate();
         req.logger.info(`Se ha registrado exitosamente un usuario ${date}`);
         await transport.sendMail({
             from: `no-reply <${config.GMAIL_APP_USER}>`, 
@@ -140,13 +145,13 @@ auth.post('/restorepassword', async (req, res) => {
                 from: `no-reply <${config.GMAIL_APP_USER}>`, 
                 to: `${user.email}`,
                 subject: 'Recupero de contraseña',
-                html: `<div><h2>¿Olvidaste tu contraseña?</h2><h3>Para restaurarla ingresa a este link:</h3><p>http://localhost:8080/api/views/restore?temp_token=${token}</p><br><p>por favor no responder este mail, es automático</p></div>`
+                html: `<div><h2>¿Olvidaste tu contraseña?</h2><h3>Para restaurarla ingresa a este link:</h3><p>http://localhost:8080/restore?temp_token=${token}</p><br><p>por favor no responder este mail, es automático</p></div>`
                 
             });
-            res.redirect('/api/views/emailrecoverysend')
+            res.redirect('/emailrecoverysend')
 
         }else{
-            res.redirect('/api/views/passwordrecovery');
+            res.redirect('/passwordrecovery');
 
         }
 
@@ -164,7 +169,7 @@ auth.post('/restorepassword2', verifyToken, async (req, res) => {
     try{
 
         if(!verifyToken){
-            res.redirect('/api/views/passwordrecovery')
+            res.redirect('/passwordrecovery')
         }
         const user = req.user._doc
         const password = req.body.password
@@ -194,7 +199,7 @@ auth.get('/logout', async (req, res) => {
         req.session.destroy((err) =>{
             if(err) return res.status(500).send({origin: config.SERVER, payload: 'Error al ejecutar el logout'});
 
-            res.redirect('/api/views/login');
+            res.redirect('/login');
             // res.status(200).send({origin:config.SERVER, payload: 'Usuario desconectado'});
         })
     } catch (err){

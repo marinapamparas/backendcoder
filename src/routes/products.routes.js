@@ -7,7 +7,7 @@ import initSocket from '../services/sockets.js';
 import { handlePolicies, generateFakeProducts, verifyRequiredBody, verifyMongoDBId, verifyToken } from "../services/utils.js";
 import config, {errorsDictionary} from "../config.js";
 import CustomError from "../services/CustomError.class.js";
-
+import nodemailer from "nodemailer";
 
 
 
@@ -15,6 +15,17 @@ const products = Router();
 //const PME = new ProductManager ("Products.json")
 const PMMDB = new ProductsManager()
 const io = initSocket();
+
+//configuracion de un transporte:
+const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.GMAIL_APP_USER,
+        pass: config.GMAIL_APP_PASS
+    }
+});
+
 
 products.param('pid', verifyMongoDBId())
 
@@ -236,6 +247,15 @@ products.delete('/:pid', verifyToken, handlePolicies (['ADMIN', 'PREMIUM']), asy
         if (proceedWithDelete) {
             // Ejecutar llamada a método para borrar producto
             await PMMDB.delete(pid)
+            //mando mail avisando que elimino un producto:
+            await transport.sendMail({
+                from: `no-reply <${config.GMAIL_APP_USER}>`, 
+                to: `${req.user._doc.email}`,
+                subject: 'Eliminaste un producto',
+                html: '<div><h2>Hola!</h2><br><p>Eliminaste un producto que te pertenece, si fue un error podes volver a cargarlo desde tu perfil</p><br><p>Este es un email automático, por favor no responder</p></div>',
+            });
+
+            
             //emito el evento productsChanged
             socketServer.emit('productsChanged', 'Se elimino un producto' );
 

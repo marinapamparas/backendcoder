@@ -1,13 +1,22 @@
 import { Router } from "express";
-import { verifyToken } from "../services/utils.js";
-//import  UsersManager  from "../controllers/UsersManagerMongoDB.js";
 import { uploader } from "../services/uploader.js";
 import UsersManager from "../controllers/users.manager.js";
+import config from "../config.js";
+import nodemailer from "nodemailer";
+import { handlePolicies, verifyToken } from "../services/utils.js";
 
 const users = Router();
 
 const UMMDB = new UsersManager ()
 
+const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.GMAIL_APP_USER,
+        pass: config.GMAIL_APP_PASS
+    }
+});
 
 
 users.get('/:uid', async (req,res)=>{
@@ -23,6 +32,19 @@ users.get('/:uid', async (req,res)=>{
         res.status(500).send('Server error');
     }
 });
+
+users.get( '/', async (req,res)=>{
+    try{
+        const users = await UMMDB.getAll()
+        const filteredUsers = users.map(user => {
+            const { firstName, email, role } = user;
+            return { firstName, email, role }; 
+        });
+        res.status(200).send({ origin:config.SERVER, payload: filteredUsers });
+    }catch (error){
+
+    }
+})
 
 users.post('/premium/:uid', async (req,res)=>{
     try{ 
@@ -100,6 +122,73 @@ users.post('/:typeDoc/documents', uploader.array('documentsFiles', 3), async (re
        
     }catch (error){
         console.error('Error al crear el usuario:', error);
+        res.status(500).send('Error del servidor');
+    }
+});
+
+users.post('/updaterole', verifyToken, handlePolicies (['ADMIN']), async(req,res)=>{
+    try{
+        const { userId, role } = req.body;
+        
+        const updatedUser = await UMMDB.update(userId, { "role" : role})
+        if (!updatedUser) {
+            return res.status(404).json({ success: false, message: 'No se pudo realizar el cambio de rol' });
+        }
+        res.status(200).send({success: true, message:'Se efectuó exitosamente el cambio de rol, actualiza para verlo'})
+
+    }catch (error){
+        console.error('Error al modificar el rol de usuario:', error);
+        res.status(500).send('Error del servidor');
+    }
+})
+users.delete ('/deleteuser', verifyToken, handlePolicies (['ADMIN']), async(req, res)=>{
+    try{
+        const { userId } = req.body;
+        
+        const result = await UMMDB.delete(userId);
+
+        if (result) {
+            res.status(404).json({ message: 'El usuario no se encontró en la base de datos' });
+        } else {
+            res.json({ message: 'El usuario se eliminó correctamente, actualice para ver el cambio' });
+        }
+
+    }catch (error){
+        console.error('Error al borrar el usuario de la db:', error);
+        res.status(500).send('Error del servidor');
+    }
+})
+
+users.delete ( '/', async(req,res)=>{
+    try{
+        const users = await UMMDB.getAll()
+        const now = Date.now(); 
+        const inactiveTime = now - 2 * 24 * 60 * 60 * 1000;
+
+        const inactiveUsers = users.filter(user => {
+            const { last_connection } = user;
+            return new Date(last_connection).getTime() < inactiveTime;
+        });
+        
+        if (inactiveUsers.length > 0) {
+            inactiveUsers.forEach(async user => {
+                
+                const uid = user._id.toHexString(); 
+                const mail = user.email
+                
+                await UMMDB.delete(uid)
+                await transport.sendMail({
+                    from: `no-reply <${config.GMAIL_APP_USER}>`, 
+                    to: `${mail}`,
+                    subject: 'Detectamos que tu cuenta se encuentra inactiva',
+                    html: '<div><h2>Hola!</h2><h3>Detectamos que tu cuenta se encuentra inactiva hace 2 días, por lo que procedimos a eliminarla</h3><br><p>Gracias por haber formado parte de nuestro sistema</p> <br><p>Si quisieras volver a loguearte deberás crearte una nueva cuenta, registrandote nuevamente.</p> <br><p>Por favor no responder este mail, es automático</p></div>',
+                });
+            });
+        }
+        res.status(200).send({origin:config.SERVER, payload: 'Se efectuó el delete de los usuarios inactivos'})
+        
+    }catch(error){
+        console.error('Error al eliminar los usuarios inactivos:', error);
         res.status(500).send('Error del servidor');
     }
 });

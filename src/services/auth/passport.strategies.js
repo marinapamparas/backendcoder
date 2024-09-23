@@ -8,6 +8,7 @@ import CartsManager from '../../controllers/carts.manager.js';
 import GitHubStrategy from 'passport-github2';
 import config from '../../config.js';
 import { createHash } from '../utils.js';
+import moment from "moment";
 
 
 const localStrategy = local.Strategy;
@@ -56,14 +57,16 @@ const initAuthStrategies = () => {
                 
 
                 const newCart = await CMMDB.add();
-                
+                const date = moment().toDate();
+
                 const user = {
                     firstName : firstName,
                     lastName : lastName,
                     age : age,
                     email : username,
                     password : createHash(password),
-                    _cart_id: newCart._id 
+                    _cart_id: newCart._id,
+                    last_connection: date
                 }
                 
                 const foundUser = await UMMDB.add(user);

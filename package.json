@@ -8,7 +8,7 @@
     "test_sessions": "mocha test/supertest.sessions.test.js",
     "test_products": "mocha test/products.dao.test.js",
     "dev": "node --watch src/app.js --mode=devel",
-    "start": "node --watch src/app.js --mode=prod"
+    "start": "node src/app.js --mode=prod"
   },
   "repository": {
     "type": "git",

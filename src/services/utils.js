@@ -95,10 +95,12 @@ export const verifyMongoDBId = () => {
 export const handlePolicies = policies => {
     return async (req, res, next) => {
         try{
+            
             if (policies[0]=== "PUBLIC") return next();
 
             if(!req.user){
                 logger.error(`Usuario no autenticado`);
+                
                 throw new CustomError(errorsDictionary.INVALID_AUTENTICATION);
             }    
            

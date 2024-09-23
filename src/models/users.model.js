@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import modelCarts from './carts.models.js';
+import moment from 'moment';
 
 mongoose.pluralize(null);
 
@@ -10,6 +11,7 @@ const documentSchema = new mongoose.Schema({
     name: { type: String }, 
     reference: { type: String }
 });
+const date = moment().format('DD-MM-YYYY HH:mm:ss');
 
 const schema = new mongoose.Schema({
 

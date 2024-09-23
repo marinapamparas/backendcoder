@@ -13,6 +13,14 @@ class UsersManager {
     constructor() {
     }
 
+    getAll = async () => {
+        try{
+            return await service.getAll();
+        }catch(err) {
+            return err.message;
+        }
+    };
+
     getOne = async (filter) => {
         try {
             return await service.getOne(filter);

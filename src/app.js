@@ -72,7 +72,7 @@ import { cpus } from 'os';
     app.use(addLogger)
     app.use('/api/products', products);
     app.use('/api/carts', carts);
-    app.use('/api/views', views);
+    app.use('/', views);
     app.use('/api/users', users);
     app.use('/api/auth', auth);
     app.use('/api/test', test);
@@ -80,6 +80,10 @@ import { cpus } from 'os';
 
     app.use(errorsHandler);
     
+    // Ruta para redirigir a /products
+    app.get('/', (req, res) => {
+        res.redirect('/products');
+    });
 
 
     //app.use('/api/test', new TestRouter().getRouter());
