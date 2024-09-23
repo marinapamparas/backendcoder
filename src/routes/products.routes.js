@@ -4,7 +4,7 @@ import { uploader } from "../services/uploader.js";
 import ProductsManager from "../controllers/products.manager.js";
 //import { ProductManagerMongoDb } from "../controllers/ProductManagerMongoDb.js";
 import initSocket from '../services/sockets.js';
-import { handlePolicies, generateFakeProducts, verifyRequiredBody, verifyMongoDBId, verifyToken } from "../services/utils.js";
+import { handlePolicies, verifyRequiredBody, verifyMongoDBId, verifyToken } from "../services/utils.js";
 import config, {errorsDictionary} from "../config.js";
 import CustomError from "../services/CustomError.class.js";
 import nodemailer from "nodemailer";
@@ -49,18 +49,18 @@ export const checkOwnership = async (pid, email) => {
     
 // });
 
-products.get('/mockingproducts', async (req,res)=>{
-    try{                
-        const mockProducts = await generateFakeProducts(100)
+// products.get('/mockingproducts', async (req,res)=>{
+//     try{                
+//         const mockProducts = await generateFakeProducts(100)
         
-        res.status(200).send({payload: mockProducts})
+//         res.status(200).send({payload: mockProducts})
         
-    }catch (error){
-        //console.error('Error al crear mock de productos:', error);
+//     }catch (error){
+//         //console.error('Error al crear mock de productos:', error);
         
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
-    }
-});
+//         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+//     }
+// });
 
 products.get('/', async (req,res)=>{
     try{                
