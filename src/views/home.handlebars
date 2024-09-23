@@ -1,8 +1,103 @@
-<div>
-    <h2>Listado de productos</h2>
-    <ul>
-        {{#each data}}
-            <li>{{title}}</li>
-        {{/each}}
-    </ul>
-</div>
+
+
+<body class="fondo">
+    <div class="container">
+        
+        <div class="presentacion">
+            <h1 class="titulo">Bienvenido a tu almacén online</h1>
+        </div>
+        <div class="subtitulo1">
+            <h3 class="subtitulo2">El mejor almacén, con los mejores precios!</h3>
+        </div>
+        <div class="divPara">
+
+        <h4 class="para">Para poder comprar, hace falta que ingreses como usuario </h4>
+        <p class="login">Si ya estas registrado, hace click <span><a href="/login">aquí</a></span> para ingresar</p>
+        <p class="register">Sino <span><a href="/register">registrate</a></span></p>
+        </div>
+        <h5 class="listado">Productos en promo:</h5>
+        <div class="row">
+
+            {{#each products}}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Nombre del producto: {{title}}</h6>
+                        <p class="card-text">ID del producto: {{_id}}</p>
+                        <p class="card-text">Precio del producto: {{price}}</p>
+                        <p class="card-text">Descripción del producto: {{description}}</p>
+                        <p class="card-text">Stock disponible: {{stock}}</p>
+                        <p class="card-text">Categoría: {{category}}</p>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <div id="pagination" class="mt-3 color">
+            {{#if showPrev}}
+            <a href="/products?page={{prevPage}}" class="btn btn-primary">Anterior</a>
+            {{/if}}
+            <span class="mx-2">Página {{currentPage}} de {{totalPages}}</span>
+            {{#if showNext}}
+            <a href="/products?page={{nextPage}}" class="btn btn-primary">Siguiente</a>
+            {{/if}}
+        </div>
+        <br>
+    </div>
+<body>
+
+<style>
+    .presentacion{
+        margin-top: 3%;
+        text-align: center;
+        padding: 2%;
+        border: solid rgb(155, 143, 143);
+        border-radius: 20px;
+        background-color: rgb(155, 143, 143);
+        
+    }
+    .titulo{
+        color: white;
+    }
+    .subtitulo1{
+        margin: 2%;
+        text-align: center;
+        color: white;
+       
+    }
+   
+    .fondo{
+        background-color: rgb(53, 51, 51);
+    }
+    .divPara{
+        border: solid white;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2%;
+        margin-bottom: 2%;
+        margin-top: 4%;
+    }
+    .para{
+        color: aliceblue;
+    }
+    .login{
+        padding-top: 1%;
+        font-size: larger;
+        color: aliceblue;
+    }
+    .register{
+        font-size: larger;
+        color: aliceblue;
+    }
+    .listado{
+        color: aliceblue;
+        padding-bottom: 2%;
+        text-align: center;
+    }
+    .color{
+        color: aliceblue;
+    }
+</style>

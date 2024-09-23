@@ -23,14 +23,25 @@ socket.on('connect', () => {
 
 views.get('/', async (req,res)=>{
 
-    try{
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt (req.query.limit) || 5;
+    const sort = 1;
+    const query = "";
 
-        // const productsFile = await PMMDB.getPaginated()
-        // const productsList = JSON.parse(JSON.stringify(productsFile.docs));
-       
-        // const data = {data : productsList}
-        // res.status(200).render('home', data)
-        res.redirect('/products')
+    try{
+        
+        const products = await PMMDB.getPaginated(query, limit, page, sort);
+        const productsString = JSON.parse(JSON.stringify(products));
+        res.status(200).render('home', {
+            products: productsString.docs,
+            totalPages: productsString.totalPages,
+            currentPage: page,
+            showPrev: page > 1,
+            showNext: page < productsString.totalPages,
+            prevPage: page > 1 ? page - 1 : null,
+            nextPage: page < productsString.totalPages ? page + 1 : null
+        });
+        
     
     }catch (error){
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
