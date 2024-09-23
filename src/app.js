@@ -84,6 +84,7 @@ import { cpus } from 'os';
     app.get('/', (req, res) => {
         res.redirect('/products');
     });
+    app.get('/favicon.ico', (req, res) => res.status(204));
 
 
     //app.use('/api/test', new TestRouter().getRouter());

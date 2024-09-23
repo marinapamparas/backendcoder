@@ -40,7 +40,7 @@ const config = {
     PERSISTENCE: process.env.PERSISTENCE || 'mongo',
     GMAIL_APP_USER: process.env.GMAIL_APP_USER,
     GMAIL_APP_PASS: process.env.GMAIL_APP_PASS,
-    MODE: clOptions.mode === 'devel' ? 'dev' : 'prod'
+    MODE: clOptions.mode === 'devel' ? 'devel' : 'prod'
 };
 
 
