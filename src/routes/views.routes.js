@@ -25,11 +25,12 @@ views.get('/', async (req,res)=>{
 
     try{
 
-        const productsFile = await PMMDB.getPaginated()
-        const productsList = JSON.parse(JSON.stringify(productsFile.docs));
+        // const productsFile = await PMMDB.getPaginated()
+        // const productsList = JSON.parse(JSON.stringify(productsFile.docs));
        
-        const data = {data : productsList}
-        res.status(200).render('home', data)
+        // const data = {data : productsList}
+        // res.status(200).render('home', data)
+        res.redirect('/products')
     
     }catch (error){
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
