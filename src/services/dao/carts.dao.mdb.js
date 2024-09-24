@@ -101,7 +101,7 @@ class CartsService {
                 if (existingProduct) {
                     // Si el producto ya existe, actualizar la cantidad
                     existingProduct.quantity = qty;
-                    console.log("Quantity updated in product successfully");
+                    
                 } 
 
                 // Guardar el carrito actualizado en la base de datos
@@ -243,7 +243,7 @@ class CartsService {
                 purchaser : userData.email 
             }
             const ticketFinished = await ticketsDao.add(ticket)
-            console.log('ticketFinished:', ticketFinished)
+            
             return ticketFinished
         }
 

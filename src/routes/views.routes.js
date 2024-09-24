@@ -72,9 +72,9 @@ views.get('/chat', handlePolicies (['USER']), async (req,res)=>{
         res.status(200).render('chat', {})
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        
     }
 });
 
@@ -103,9 +103,9 @@ views.get('/products', async (req,res)=>{
         });
     
     }catch (error){
+        console.error('Error al leer el archivo de productos:', error);
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
-        //console.error('Error al leer el archivo de productos:', error);
-        //res.status(500).send('Error del servidor');
+        
     }
 });
 
@@ -125,9 +125,9 @@ views.get('/cart/:cid', async (req,res)=>{
 
 
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error al recuperar el carrito:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
+        
     }
 });
 

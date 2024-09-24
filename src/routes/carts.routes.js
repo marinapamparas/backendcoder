@@ -7,13 +7,21 @@ import passport from "passport";
 import { checkOwnership } from "./products.routes.js";
 import config, {errorsDictionary} from "../config.js";
 import CustomError from "../services/CustomError.class.js";
-
+import nodemailer from "nodemailer";
 
 const carts = Router();
 // const CME = new CartManager ("Carts.json")
 const CMMDB = new CartsManager ()
 
-
+//configuracion de un transporte:
+const transport = nodemailer.createTransport({
+    service: 'gmail',
+    port: 587,
+    auth: {
+        user: config.GMAIL_APP_USER,
+        pass: config.GMAIL_APP_PASS
+    }
+});
 
 carts.get('/:cid', async (req,res)=>{
     try{ 
@@ -30,11 +38,11 @@ carts.get('/:cid', async (req,res)=>{
 
 //passport.authenticate('current', { failureRedirect: `/:cid/purchase?error=${encodeURI('No se pudo recuperar el usuario')}`})
 
-carts.get('/:cid/purchase', passport.authenticate('current', { failureRedirect: `/purchase?error=${encodeURI('No hay un token registrado')}`}), async (req,res)=>{
+carts.post('/:cid/purchase', passport.authenticate('current', { failureRedirect: `/purchase?error=${encodeURI('No hay un token registrado')}`}), async (req,res)=>{
     try{ 
     const cid = req.params.cid
     
-    const user =  req.user._doc;  // Recuperar el usuario autenticado
+    const user =  req.user._doc;  
 
     if (!user) {
         throw new Error('No se pudo recuperar el usuario');
@@ -42,8 +50,63 @@ carts.get('/:cid/purchase', passport.authenticate('current', { failureRedirect: 
     
     const purchaseResponse = await CMMDB.validationPurchase(cid, user)
     
+    const ticketHTML = `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    color: #333;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .ticket {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                h2 {
+                    color: #2c3e50;
+                }
+                .footer {
+                    margin-top: 20px;
+                    font-size: 12px;
+                    color: #999;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="ticket">
+                <h2>Hola!</h2>
+                <p>¡Realizaste exitosamente una compra en nuestro almacén!</p>
+                <p><strong>Detalles del Ticket:</strong></p>
+                <ul>
+                    <li><strong>Monto:</strong> $${purchaseResponse.amount}</li>
+                    <li><strong>Comprador:</strong> ${purchaseResponse.purchaser}</li>
+                    <li><strong>ID de compra:</strong> ${purchaseResponse._id}</li>
+                    <li><strong>Código:</strong> ${purchaseResponse.code}</li>
+                    <li><strong>Fecha de compra:</strong> ${new Date(purchaseResponse.purchase_datetime).toLocaleString()}</li>
+                </ul>
+                <p class="footer">Este es un email automático, por favor no responder.</p>
+            </div>
+        </body>
+        </html>
+        `;
 
-    // res.redirect('/api/views/ticket')
+    //mando mail con el ticket de compra:
+    await transport.sendMail({
+        from: `no-reply <${config.GMAIL_APP_USER}>`, 
+        to: `${req.user._doc.email}`,
+        subject: 'Compra exitosa!',
+        html: ticketHTML,
+    });
+
+    
     res.status(200).send({payload: purchaseResponse})
     }catch (error){
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
@@ -62,7 +125,7 @@ carts.post('/', async (req,res)=>{
     }
 
 });
-//handlePolicies (['USER']),
+
 carts.post('/:cid/product/:pid', verifyToken, async (req,res)=>{
     try{
         const cid= req.params.cid;
