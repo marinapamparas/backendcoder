@@ -69,8 +69,6 @@
 
 ## Documentación de la API
 
- <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.bvp.com%2Fcompanies%2Frender&psig=AOvVaw37k9pMffyOtQywmqqRxCvE&ust=1727295977207000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPiogZG13IgDFQAAAAAdAAAAABAJ" width="70"/>
-
 Puedes encontrar la documentación completa de nuestra API utilizando **Swagger** en los siguientes enlaces:
 
 [Documentación de la API Desarrollo](http://localhost:8080/api/docs/)  
