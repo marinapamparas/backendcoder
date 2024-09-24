@@ -62,12 +62,14 @@
 <h3 align="center"><strong>Despliegue:</strong></h3>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/railway-%230062DF.svg?style=for-the-badge&logo=railway&logoColor=white" alt="Railway" style="margin: 0 10px;">
+  <a href="https://render.com/" target="_blank">
+    RENDER
+  </a>
 </div>
 
 ## Documentación de la API
 
- <img src="https://raw.githubusercontent.com/swagger-api/swagger.io/wordpress/images/assets/SW-logo-clr.png" width="70"/>
+ <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.bvp.com%2Fcompanies%2Frender&psig=AOvVaw37k9pMffyOtQywmqqRxCvE&ust=1727295977207000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCPiogZG13IgDFQAAAAAdAAAAABAJ" width="70"/>
 
 Puedes encontrar la documentación completa de nuestra API utilizando **Swagger** en los siguientes enlaces:
 
