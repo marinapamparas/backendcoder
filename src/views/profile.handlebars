@@ -2,7 +2,9 @@
     .body{
         background-color: rgb(128, 119, 119)
     }
-
+    .color{
+        color: aliceblue
+    }
     .letras {
         color: #000000;
         padding-top: 1%;
@@ -17,7 +19,7 @@
 
     }
     .recuadro{
-        border: #000000 solid;
+        border: #ffffff solid;
         
 
     }
@@ -55,6 +57,7 @@
 
     .modal-content {
         background-color: #fefefe;
+        color:#000000;
         margin: 5% auto;
         padding: 20px;
         border: 1px solid #888;
@@ -80,12 +83,12 @@
 
     
 </style>
-<body>
+<body class="body">
     
-    <div class="container">
+    <div class="container color">
         <div class="row contenedor">
             <div class="col">
-                <h2 class="letras">Perfil de usuario {{login_type}}</h2>
+                <h2 class="letras color">Perfil de usuario {{login_type}}</h2>
             </div>
             <div class="col recuadro">
                 <p class="datos">{{user.lastName}}, {{user.firstName}}</p>         
@@ -118,7 +121,7 @@
                 </div>
                 <div class="col">
 
-                <a href="/premiumDocs" class="resaltar"> Click aquí</a>
+                <a href="/premiumDocs" class="resaltar color"> Click aquí</a>
                 </div>
             </div>
         {{/if}}

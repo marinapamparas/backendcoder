@@ -1,6 +1,6 @@
-<body>
+<body class="body">
     
-    <div class="container">
+    <div class="container color">
         <div class="row">
             <h2 class="espacio">Para volverte Premium necesitas cargar los siguientes documentos:</h2>
             <ul>
@@ -46,7 +46,7 @@
             <div class="modal-content">
                 <h5>Resultado de la Actualización</h5>
                 <div class="modal-body">
-                    <!-- Mensaje se llenará dinámicamente -->
+                    
                 </div>
                 <button class="btn-close"></button>
             </div>
@@ -57,7 +57,10 @@
 
 <style>
     .body{
-    background-color: rgb(128, 119, 119)
+    background-color: rgb(219, 203, 203)
+    }
+    .color{
+        color: rgb(39, 38, 38);
     }
     .p{
         margin-top: 4%;
@@ -71,7 +74,7 @@
         font-weight: bold;
     }
     .tick {
-        color: green;
+        color: rgb(133, 151, 133) !important;
         font-weight: bold;
     }
      .modal {
@@ -89,6 +92,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        color: black;
     }
     .btn-close {
         margin-top: 1rem;
@@ -133,7 +137,7 @@
             })
         .then(data => {
             if (data.status === 'OK') {
-                document.getElementById(docId).innerHTML += ' <span class="tick">✔</span>';
+                document.getElementById(docId).innerHTML += ' <span style="color: green;">✔</span>';
             } else {
                 alert('Error al subir el documento');
             }

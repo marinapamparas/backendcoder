@@ -153,7 +153,7 @@ views.get('/profile', async (req,res)=>{
 
     try{
         
-        if(!req.user) return res.redirect('/api/views/login');
+        if(!req.user) return res.redirect('/login');
         const user = req.user._doc ? req.user._doc : req.user
 
         res.status(200).render('profile', { user: user });
