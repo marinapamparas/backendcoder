@@ -30,58 +30,63 @@
     .titulo{
         text-align: center;
     }
+    .body{
+    background-color: rgb(128, 119, 119)
+    }
 </style>
 
+<body>
+    
+    <div class="register-container">
+        <div class="titulo">
+        <h1><b>Almacén online</b></h1>
+        <h2><b>Registro</b></h2>
+        </div>
+        {{!-- <form id="loginForm" style="margin-top: 32px;"> --}}
+        <form action="/api/auth/jwtregister" method="post" style="margin-top: 32px;">
+            <div class="input-group" style="width: 100%; margin-bottom: 8px;">
+                <span class="input-group-text" id="group1"><i class="fa-solid fa-user"></i></span>
+                <input type="text" name="firstName" class="form-control" placeholder="Nombre" required="required" autocomplete="nombre" autofocus="autofocus">
+            </div>
 
-<div class="register-container">
-    <div class="titulo">
-    <h1><b>Almacén online</b></h1>
-    <h2><b>Registro</b></h2>
+            <div class="input-group" style="width: 100%; margin-bottom: 8px;">
+                <span class="input-group-text" id="group2"><i class="fa-solid fa-user"></i></span>
+                <input type="text" name="lastName" class="form-control" placeholder="Apellido" required="required" autocomplete="apellido">
+            </div>
+
+            <div class="input-group" style="width: 100%; margin-bottom: 8px;">
+                <span class="input-group-text" id="group3"><i class="fa-solid fa-envelope"></i></span>
+                <input type="email" name="email" class="form-control" placeholder="Email" required="required" autocomplete="email">
+            </div>
+
+            <div class="input-group" style="width: 100%; margin-bottom: 8px;">
+                <span class="input-group-text" id="group4"><i class="fa-solid fa-venus-mars"></i></span>
+                <input type="number" name="age" class="form-control" placeholder="Age" required="required" autocomplete="age">
+                {{!-- <select name="gender" placeholder="Gender" class="form-control">
+                    <option value="Female">Femenino</option>
+                    <option value="Male">Masculino</option>
+                </select> --}}
+            </div>
+
+            <div class="input-group" style="width: 100%; margin-bottom: 32px;">
+                <span class="input-group-text" id="group5"><i class="fa-solid fa-lock"></i></span>
+                <input type="password" name="password" class="form-control" placeholder="Password" required="required" autocomplete="password">
+            </div>
+
+            <button type="submit" class="btn btn-success btn-100">Registrarse</button>
+
+            {{#if msg}}
+            <div style="margin-top: 24px;">
+                <div class="alert alert-danger" role="alert">{{msg}}</div>
+            </div>
+            {{/if}}
+            
+            <div style="margin-top: 24px;" class="titulo">
+                ¿Ya tenés cuenta? <a class="a2" href="/login">Ingresá</a>
+            </div>
+        </form>
     </div>
-    {{!-- <form id="loginForm" style="margin-top: 32px;"> --}}
-    <form action="/api/auth/jwtregister" method="post" style="margin-top: 32px;">
-        <div class="input-group" style="width: 100%; margin-bottom: 8px;">
-            <span class="input-group-text" id="group1"><i class="fa-solid fa-user"></i></span>
-            <input type="text" name="firstName" class="form-control" placeholder="Nombre" required="required" autocomplete="nombre" autofocus="autofocus">
-        </div>
-
-        <div class="input-group" style="width: 100%; margin-bottom: 8px;">
-            <span class="input-group-text" id="group2"><i class="fa-solid fa-user"></i></span>
-            <input type="text" name="lastName" class="form-control" placeholder="Apellido" required="required" autocomplete="apellido">
-        </div>
-
-        <div class="input-group" style="width: 100%; margin-bottom: 8px;">
-            <span class="input-group-text" id="group3"><i class="fa-solid fa-envelope"></i></span>
-            <input type="email" name="email" class="form-control" placeholder="Email" required="required" autocomplete="email">
-        </div>
-
-        <div class="input-group" style="width: 100%; margin-bottom: 8px;">
-            <span class="input-group-text" id="group4"><i class="fa-solid fa-venus-mars"></i></span>
-            <input type="number" name="age" class="form-control" placeholder="Age" required="required" autocomplete="age">
-            {{!-- <select name="gender" placeholder="Gender" class="form-control">
-                <option value="Female">Femenino</option>
-                <option value="Male">Masculino</option>
-            </select> --}}
-        </div>
-
-        <div class="input-group" style="width: 100%; margin-bottom: 32px;">
-            <span class="input-group-text" id="group5"><i class="fa-solid fa-lock"></i></span>
-            <input type="password" name="password" class="form-control" placeholder="Password" required="required" autocomplete="password">
-        </div>
-
-        <button type="submit" class="btn btn-success btn-100">Registrarse</button>
-
-        {{#if msg}}
-        <div style="margin-top: 24px;">
-            <div class="alert alert-danger" role="alert">{{msg}}</div>
-        </div>
-        {{/if}}
-        
-        <div style="margin-top: 24px;" class="titulo">
-            ¿Ya tenés cuenta? <a class="a2" href="/login">Ingresá</a>
-        </div>
-    </form>
-</div>
+</body>
 
 <script>
     const visit = (destination) => {

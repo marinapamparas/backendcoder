@@ -80,10 +80,7 @@ import { cpus } from 'os';
 
     app.use(errorsHandler);
     
-    // Ruta para redirigir a /products
-    app.get('/', (req, res) => {
-        res.redirect('/products');
-    });
+   
     app.get('/favicon.ico', (req, res) => res.status(204));
 
 

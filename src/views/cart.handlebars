@@ -1,14 +1,133 @@
-<div>
-    <br>
-    <br>
-    <h2>Carrito con id {{cart._id}}: </h2>
-    <br>
-    <p>Usted cuenta con los siguientes productos:</p>
-    <ul>
-        {{#each cart.products}}
 
-            <li>{{this._id.title}} - ${{this._id.price}}</li>
-                              
-        {{/each}}
-    </ul>
-</div>
+<body class="body">
+    
+    <div>
+        <br>
+        <br>
+        <div class="navbar">
+            <h2 class="color">Carrito de compras </h2>
+            <form action="/products">
+                <button class="button">Volver a productos</button>
+            </form>
+        </div>
+        <br>
+        <p class="color">Usted cuenta con los siguientes productos:</p>
+        <div class="color recuadro">
+            {{#if products}}
+                {{#each products}}
+                        <div class="producto">
+                            <h3 class="titulo">{{this._id.title}}</h3>
+                            <p class="descripcion">Descripción: {{this._id.description}}</p>
+                            <p class="pesos">Precio: ${{this._id.price}}</p>
+                            <p class="cantidad">Cantidad: {{this.quantity}}</p>
+                            <button class="button delete-product" data-cid="{{../cartId}}" data-pid="{{this._id._id}}">Borrar producto</button>
+                        
+                        </div>
+                    {{/each}}
+            {{else}}
+                <p>No hay productos en el carrito.</p>
+            {{/if}}
+
+        </div>
+    </div>
+</body>
+
+<script>
+    document.querySelectorAll('.delete-product').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Evita el comportamiento por defecto del botón
+
+            const cid = this.getAttribute('data-cid'); // Obtiene el cartId
+            const pid = this.getAttribute('data-pid'); // Obtiene el productId
+
+            // Realiza la solicitud DELETE
+            fetch(`/api/carts/${cid}/product/${pid}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json(); // Espera recibir JSON como respuesta
+                } else {
+                    console.error('Error al eliminar el producto:', response.status, response.statusText);
+                }
+            })
+            .then(data => {
+                if (data.success) {
+                    const productElement = this.closest('.producto');
+                    const quantityElement = productElement.querySelector('.cantidad');
+
+                    // Actualiza la cantidad o elimina el producto
+                    if (data.updatedQuantity > 0) {
+                        // Si la cantidad es mayor que 0, actualiza el texto de cantidad
+                        quantityElement.textContent = `Cantidad: ${data.updatedQuantity}`;
+                    } else {
+                        // Si la cantidad es 0, elimina el producto del DOM
+                        productElement.remove();
+                    }
+                } else {
+                    console.error('Error en la respuesta:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+<style>
+    .body{
+    background-color: rgb(128, 119, 119)
+    }
+    .color{
+        color: aliceblue;
+    }
+    .recuadro{
+        border: solid aliceblue;
+        border-radius: 20px;
+        padding: 1%;
+    }
+    .producto{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-content: center;
+        align-items: center;
+        border: solid rgb(230, 218, 218);
+        padding: 1%;
+    }
+    .titulo{
+        padding-bottom: 1%;
+        padding-top: 1%;
+    }
+    .pesos{
+        padding-left: 10%;
+        margin:0;
+
+    }
+    .descripcion{
+        margin: 0;
+    }
+    .cantidad{
+        padding-left: 30%;
+        margin:0;
+    }
+    .button{
+        margin-left: 2%;
+        color: aliceblue;
+        background-color: rgb(60, 114, 96);
+        border: solid rgb(60, 114, 96);
+        border-radius: 20px;
+       
+    }
+    .navbar{
+        display: flex;
+        flex-direction: row;
+        justify-content: first baseline;
+        margin-left: 1%;
+        margin-right: 3%;
+
+    }
+    
+</style>

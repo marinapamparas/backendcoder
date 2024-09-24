@@ -98,7 +98,8 @@ views.get('/products', async (req,res)=>{
             showNext: page < productsString.totalPages,
             prevPage: page > 1 ? page - 1 : null,
             nextPage: page < productsString.totalPages ? page + 1 : null,
-            userJWT: req.user._doc ? req.user._doc : req.user
+            userJWT: req.user._doc ? req.user._doc : req.user,
+            cartId: JSON.parse(JSON.stringify(req.user._doc._cart_id._id))
         });
     
     }catch (error){
@@ -115,8 +116,11 @@ views.get('/cart/:cid', async (req,res)=>{
           
         const cid = req.params.cid;
         let cartProducts = await CMMDB.getOne(cid);
-        cartProducts = JSON.parse(JSON.stringify(cartProducts)); // Elimina propiedades del prototipo porque sino handlebars por seguridad no las muestra
-        const data = { cart: cartProducts };
+        cartProducts = JSON.parse(JSON.stringify(cartProducts)); 
+        const data = {  products: cartProducts.products, 
+                        cartId: cid
+        };
+        
         res.status(200).render('cart', data);
 
 

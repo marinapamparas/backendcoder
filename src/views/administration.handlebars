@@ -1,74 +1,51 @@
-{{!-- <div>
-    <h2>Users habilitados:</h2>
+<body>
     
-    {{#each data}}
-       <div class="divList">
-       <p class="espacio"> - Usuario: {{lastName}}, {{firstName}}</p>
-       <p class="espacio2"> - Rol: {{role}}</p>
-       
-            
-        <label for="role" class="select">Cambiar rol:</label>
-        <form action="/api/users/updaterole" method="post" class="margenes">
-            
-            <input type="hidden" name="userId" value="{{_id}}">
-            <select name="role" id="role">
-                    <option value="ADMIN">Admin</option>
-                    <option value="PREMIUM">Premium</option>
-                    <option value="USER">User</option>
-            </select>
-            <button class="boton1" > Aplicar cambio</button>
-        </form>
-        <form action="/api/users/deleteuser" method="put" class="margeness">
-            <button class="boton2">Eliminar usuario</button>
-        </form>
+    <div>
+        <h2>Users habilitados:</h2>
+        
+        {{#each data}}
+        <div class="divList">
+        <p class="espacio"> - Usuario: {{lastName}}, {{firstName}}</p>
+        <p class="espacio2"> - Rol: {{role}}</p>
+        
+                
+            <label for="role" class="select">Cambiar rol:</label>
+            <form onsubmit="handleRoleChange(event)" class="margenes">
+                
+                <input type="hidden" name="userId" value="{{_id}}">
 
-       </div>
-       <br>
-    {{/each}}
+                <select name="role" id="role-{{_id}}">
+                        <option value="ADMIN">Admin</option>
+                        <option value="PREMIUM">Premium</option>
+                        <option value="USER">User</option>
+                </select>
 
-</div> --}}
-<div>
-    <h2>Users habilitados:</h2>
-    
-    {{#each data}}
-       <div class="divList">
-       <p class="espacio"> - Usuario: {{lastName}}, {{firstName}}</p>
-       <p class="espacio2"> - Rol: {{role}}</p>
-       
-            
-        <label for="role" class="select">Cambiar rol:</label>
-        <form onsubmit="handleRoleChange(event)" class="margenes">
-            
-            <input type="hidden" name="userId" value="{{_id}}">
+                <button class="boton1" > Aplicar cambio</button>
 
-            <select name="role" id="role-{{_id}}">
-                    <option value="ADMIN">Admin</option>
-                    <option value="PREMIUM">Premium</option>
-                    <option value="USER">User</option>
-            </select>
+            </form>
+            <form onsubmit="handleUserDelete(event)" class="margeness">
+                <input type="hidden" name="userId" value="{{_id}}">
+                <button class="boton2">Eliminar usuario</button>
+            </form>
 
-            <button class="boton1" > Aplicar cambio</button>
-
-        </form>
-        <form onsubmit="handleUserDelete(event)" class="margeness">
-            <input type="hidden" name="userId" value="{{_id}}">
-            <button class="boton2">Eliminar usuario</button>
-        </form>
-
-       </div>
-       <br>
-    {{/each}}
-
-    <div id="messageModal" class="modal" style="display: none">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <p id="modalMessage"></p>
         </div>
-    </div>
+        <br>
+        {{/each}}
 
-</div>
+        <div id="messageModal" class="modal" style="display: none">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <p id="modalMessage"></p>
+            </div>
+        </div>
+
+    </div>
+</body>
 
 <style>
+    .body{
+    background-color: rgb(128, 119, 119)
+    }
     .modal {
         display: block;
         position: fixed;

@@ -1,58 +1,64 @@
-<div class="container">
-    <div class="row">
-        <h2 class="espacio">Para volverte Premium necesitas cargar los siguientes documentos:</h2>
-        <ul>
-            <li id="identificacion" class="espacio docs">- Identificación:</li>
-            <form id="identificacionForm" method="POST" enctype="multipart/form-data" >
-                <input type="file" class="btn" name="documentsFiles" multiple>
-                <button type="submit" class="btn btn-primary">Cargar identificación</button>
-            </form>
-
-            <li id="domicilio" class="espacio docs">- Comprobante de domicilio:</li>
-            <form id="domicilioForm" method="POST" enctype="multipart/form-data" >
-                <input type="file" class="btn" name="documentsFiles" multiple>
-                <button type="submit" class="btn btn-primary">Cargar comprobante</button>
-            </form>
-
-            <li id="cuenta" class="espacio docs">- Comprobante de estado de cuenta:</li>
-            <form id="cuentaForm" method="POST" enctype="multipart/form-data" >
-                <input type="file" class="btn" name="documentsFiles" multiple>
-                <button type="submit" class="btn btn-primary">Cargar comprobante</button>
-            </form>
-
-        </ul>
-
-    </div>
-    <div class="row">
-
-        <p class="p">¿Terminaste de cargar todos los documentos necesarios?</p>
-        
-        <div class="col">
-        <form id="upgradeForm" method="post">
-        <button type="submit" class="btn btn-success">Click aquí para pasar a PREMIUM</button>
-        </form>
-        </div>
-
-        <div class="col">
-        <form action="/profile" method="get">
-        <button type="submit" class="btn btn-success">Volver a la sección anterior</button>
-        </form>
-        </div>
-    </div>
-      <!-- Modal -->
-    <div id="responseModal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <h5>Resultado de la Actualización</h5>
-            <div class="modal-body">
-                <!-- Mensaje se llenará dinámicamente -->
-            </div>
-            <button class="btn-close"></button>
-        </div>
-    </div>
+<body>
     
-</div>
+    <div class="container">
+        <div class="row">
+            <h2 class="espacio">Para volverte Premium necesitas cargar los siguientes documentos:</h2>
+            <ul>
+                <li id="identificacion" class="espacio docs">- Identificación:</li>
+                <form id="identificacionForm" method="POST" enctype="multipart/form-data" >
+                    <input type="file" class="btn" name="documentsFiles" multiple>
+                    <button type="submit" class="btn btn-primary">Cargar identificación</button>
+                </form>
+
+                <li id="domicilio" class="espacio docs">- Comprobante de domicilio:</li>
+                <form id="domicilioForm" method="POST" enctype="multipart/form-data" >
+                    <input type="file" class="btn" name="documentsFiles" multiple>
+                    <button type="submit" class="btn btn-primary">Cargar comprobante</button>
+                </form>
+
+                <li id="cuenta" class="espacio docs">- Comprobante de estado de cuenta:</li>
+                <form id="cuentaForm" method="POST" enctype="multipart/form-data" >
+                    <input type="file" class="btn" name="documentsFiles" multiple>
+                    <button type="submit" class="btn btn-primary">Cargar comprobante</button>
+                </form>
+
+            </ul>
+
+        </div>
+        <div class="row">
+
+            <p class="p">¿Terminaste de cargar todos los documentos necesarios?</p>
+            
+            <div class="col">
+            <form id="upgradeForm" method="post">
+            <button type="submit" class="btn btn-success">Click aquí para pasar a PREMIUM</button>
+            </form>
+            </div>
+
+            <div class="col">
+            <form action="/profile" method="get">
+            <button type="submit" class="btn btn-success">Volver a la sección anterior</button>
+            </form>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div id="responseModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <h5>Resultado de la Actualización</h5>
+                <div class="modal-body">
+                    <!-- Mensaje se llenará dinámicamente -->
+                </div>
+                <button class="btn-close"></button>
+            </div>
+        </div>
+        
+    </div>
+</body>
 
 <style>
+    .body{
+    background-color: rgb(128, 119, 119)
+    }
     .p{
         margin-top: 4%;
         font-weight: 500;

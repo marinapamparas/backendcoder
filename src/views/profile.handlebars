@@ -1,6 +1,6 @@
 <style>
-    body {
-        background-color: #ffffff;
+    .body{
+        background-color: rgb(128, 119, 119)
     }
 
     .letras {
@@ -80,84 +80,86 @@
 
     
 </style>
-
-<div class="container">
-    <div class="row contenedor">
-        <div class="col">
-            <h2 class="letras">Perfil de usuario {{login_type}}</h2>
-        </div>
-        <div class="col recuadro">
-            <p class="datos">{{user.lastName}}, {{user.firstName}}</p>         
-            <p class="datos">Mail: {{user.email}}</p>
-        </div>
-    </div>
-
-    <br>
-    {{!-- <form action="/api/uploads/profile" method="POST" enctype="multipart/form-data"></form> --}}
-    <form id="uploadForm" enctype="multipart/form-data">
-
-            <div class="row espacio">
-                <p class="resaltar">Carga tu imagen de perfil desde acá:</p>
-                <div class="col">
-                    <input type="file"  class="btn" name="profileImage" multiple>
-                </div>
-                <div class="col">
-                    <button type="submit" class="btn btn-success">Cargar</button>
-                </div>
-            </div>
-    </form>
-
+<body>
     
-
-    {{#if (eq user.role 'USER')}}
-        <div class="row espacio2">
+    <div class="container">
+        <div class="row contenedor">
             <div class="col">
-
-            <p class="resaltar">¿Querés volverte Premium y vender tus propios productos?</p>
+                <h2 class="letras">Perfil de usuario {{login_type}}</h2>
             </div>
-            <div class="col">
-
-            <a href="/premiumDocs" class="resaltar"> Click aquí</a>
+            <div class="col recuadro">
+                <p class="datos">{{user.lastName}}, {{user.firstName}}</p>         
+                <p class="datos">Mail: {{user.email}}</p>
             </div>
         </div>
-    {{/if}}
-    {{#if (eq user.role 'PREMIUM')}}
-        <form id="uploadProductForm" enctype="multipart/form-data">
+
+        <br>
+        {{!-- <form action="/api/uploads/profile" method="POST" enctype="multipart/form-data"></form> --}}
+        <form id="uploadForm" enctype="multipart/form-data">
+
+                <div class="row espacio">
+                    <p class="resaltar">Carga tu imagen de perfil desde acá:</p>
+                    <div class="col">
+                        <input type="file"  class="btn" name="profileImage" multiple>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-success">Cargar</button>
+                    </div>
+                </div>
+        </form>
+
+        
+
+        {{#if (eq user.role 'USER')}}
             <div class="row espacio2">
-                
-                <p class="resaltar">Carga las imagenes de tus productos desde acá:</p>
-                
                 <div class="col">
-                    <input type="file"  class="btn" name="productImages" multiple >
+
+                <p class="resaltar">¿Querés volverte Premium y vender tus propios productos?</p>
                 </div>
                 <div class="col">
-                    <button type="submit" class="btn btn-success">Cargar</button>
+
+                <a href="/premiumDocs" class="resaltar"> Click aquí</a>
                 </div>
             </div>
-        </form>    
-    {{/if}}
-    
-    <form action="/products" method="put" class="separacion">
-        <button type="submit" class="btn btn-success">Volver a la sección de productos</button>
-    </form>
+        {{/if}}
+        {{#if (eq user.role 'PREMIUM')}}
+            <form id="uploadProductForm" enctype="multipart/form-data">
+                <div class="row espacio2">
+                    
+                    <p class="resaltar">Carga las imagenes de tus productos desde acá:</p>
+                    
+                    <div class="col">
+                        <input type="file"  class="btn" name="productImages" multiple >
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-success">Cargar</button>
+                    </div>
+                </div>
+            </form>    
+        {{/if}}
+        
+        <form action="/products" method="put" class="separacion">
+            <button type="submit" class="btn btn-success">Volver a la sección de productos</button>
+        </form>
 
-    <br>
+        <br>
 
-    <form action="/api/auth/logout" method="get">
-        <button type="submit" class="btn btn-success">Cerrar sesión</button>
-    </form>
+        <form action="/api/auth/logout" method="get">
+            <button type="submit" class="btn btn-success">Cerrar sesión</button>
+        </form>
 
-    <!-- Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p id="modalText"></p>
+        <!-- Modal -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <p id="modalText"></p>
+            </div>
         </div>
+
+
+        
     </div>
-
-
-    
-</div>
+</body>
 
 <script>
     document.getElementById('uploadForm').addEventListener('submit', function(event) {

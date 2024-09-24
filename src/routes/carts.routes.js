@@ -68,18 +68,17 @@ carts.post('/:cid/product/:pid', verifyToken, async (req,res)=>{
         const cid= req.params.cid;
         const pid= req.params.pid;
         const email = req.user._doc.email; 
-        
-        let dontAddProduct = true;
+
+        let dontAddProduct = false;
         if (req.user._doc.role === 'PREMIUM') dontAddProduct = await checkOwnership(pid, email);
 
         if (dontAddProduct) {
            
             res.status(200).send({ origin: config.SERVER, payload: 'No puede cargar este producto a su carrito porque le pertenece' });
-
+            
         } else {
-
+        
             await CMMDB.addProduct(cid, pid)
-
             res.status(200).send({ origin: config.SERVER, payload: 'Producto agregado al carrito exitosamente' });
         }
 
@@ -88,14 +87,18 @@ carts.post('/:cid/product/:pid', verifyToken, async (req,res)=>{
     }
 });
 
-carts.delete('/:cid/product/:pid', (req,res)=>{
+carts.delete('/:cid/product/:pid', async (req,res)=>{
     try{
         const cid= req.params.cid;
         const pid= req.params.pid;
+       
+        const result = await CMMDB.deleteProduct(cid, pid); 
 
-        CMMDB.deleteProduct(cid, pid)
-
-        res.status(200).send('Success')
+        if (result && result.success) {
+            res.status(200).json(result); // Envía el objeto de resultado como respuesta JSON
+        } else {
+            res.status(404).json({ success: false, message: 'Product not found' });
+        }
 
     }catch (error){
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)

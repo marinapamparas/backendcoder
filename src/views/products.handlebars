@@ -1,78 +1,176 @@
-<div class="container">
+<!-- Incluye Toastify en el HTML -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+
+
+<body class="body">
     
-    <div class="row recuadro">
-        {{#if userJWT}}
-            
-            <div class="col espacio">
-                <h1 class="letras">Bienvenidx {{userJWT.firstName}} {{userJWT.lastName}}</h1>
-            </div>
-            
-            <div class="col espacio">
+    <div class="container">
+        
+        <div class="row recuadro">
+            {{#if userJWT}}
+                
+                <div class="col espacio color">
+                    <h1 class="letras">Bienvenidx {{userJWT.firstName}} {{userJWT.lastName}}</h1>
+                </div>
+                
+                <div class="col espacio color">
 
-                <h4 class="letras"> Email: {{userJWT.email}}</h4>
-                <h3>Role: {{userJWT.role}}</h3>
-            </div>
-            
-            <div class="col espacio">
-                <form action="/api/auth/logout" method="get">
-                    <button type="submit" class="btn btn-primary">Salir</button>
-                </form>
+                    <h4 class="letras"> Email: {{userJWT.email}}</h4>
+                    <h3>Role: {{userJWT.role}}</h3>
+                </div>
+                <div class= "col color carrito">
+                    <a href="/cart/{{cartId}}" class="carritol">Ver carrito 🛒</a>
+                </div>
+                <div class="col espacio color">
+                    <form action="/api/auth/logout" method="get">
+                        <button type="submit" class="btn btn-primary">Salir</button>
+                    </form>
 
-            </div class= "col espacio">
-            <div style="margin-top: 24px;">
-                <a class="a2" href="/profile">Editá tu perfil de usuario</a>
-                <br>
-                <br>
-            </div>
-            
+                </div>
 
-        {{/if}}
+                <div>
+                    <a class="a2 color" href="/profile">Editá tu perfil de usuario</a>
+                    <br>
+                    <br>
+                </div>
+                
+
+            {{/if}}
+        </div>
     </div>
-</div>
-
-<style>
-
-.recuadro{
-    border: solid black;
-    text-align: center;
-    align-items: center;
-}
-.espacio{
-    margin-top: 2%;
-}
-</style>
 
 
+    <div class="container">
+        <h1 class="mt-4 color">Bienvenido a tu almacén online</h1>
+        <h2 class="mt-3 color">Aquí podes visualizar los productos en stock:</h2>
+        <div class="row">
+            {{#each products}}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">Nombre del producto: {{title}}</h6>
+                        <p class="card-text">ID del producto: {{_id}}</p>
+                        <p class="card-text">Precio del producto: {{price}}</p>
+                        <p class="card-text">Descripción del producto: {{description}}</p>
+                        <p class="card-text">Stock disponible: {{stock}}</p>
+                        <p class="card-text">Categoría: {{category}}</p>
+                        <button class="btn btn-primary add-to-cart" data-cartid="{{../cartId}}" data-productid="{{_id}}">Agregar al carrito</button>
 
-<div class="container">
-    <h1 class="mt-4">Bienvenido a tu almacén online</h1>
-    <h2 class="mt-3">Aquí podes visualizar los productos en stock:</h2>
-    <div class="row">
-        {{#each products}}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title">Nombre del producto: {{title}}</h6>
-                    <p class="card-text">ID del producto: {{_id}}</p>
-                    <p class="card-text">Precio del producto: {{price}}</p>
-                    <p class="card-text">Descripción del producto: {{description}}</p>
-                    <p class="card-text">Stock disponible: {{stock}}</p>
-                    <p class="card-text">Categoría: {{category}}</p>
-                    <button class="btn btn-primary add-to-cart" data-id="{{_id}}">Agregar al carrito</button>
+                    </div>
                 </div>
             </div>
+            {{/each}}
         </div>
-        {{/each}}
+        <div id="pagination" class="mt-3">
+            {{#if showPrev}}
+            <a href="/products?page={{prevPage}}" class="btn btn-primary">Anterior</a>
+            {{/if}}
+            <span class="mx-2 color">Página {{currentPage}} de {{totalPages}}</span>
+            {{#if showNext}}
+            <a href="/products?page={{nextPage}}" class="btn btn-primary">Siguiente</a>
+            {{/if}}
+        </div>
     </div>
-    <div id="pagination" class="mt-3">
-        {{#if showPrev}}
-        <a href="/products?page={{prevPage}}" class="btn btn-primary">Anterior</a>
-        {{/if}}
-        <span class="mx-2">Página {{currentPage}} de {{totalPages}}</span>
-        {{#if showNext}}
-        <a href="/products?page={{nextPage}}" class="btn btn-primary">Siguiente</a>
-        {{/if}}
-    </div>
-</div>
+</body>
 
 
+<style>
+    .carrito{
+        
+        display: flex;
+        justify-content: end;
+        align-items: end;
+    }
+    .carritol{
+        color: aliceblue;
+    }
+    .body{
+        background-color: rgb(128, 119, 119)
+        
+    }
+    .recuadro{
+        border: solid white;
+        border-radius: 20px;
+        width: 100%;
+        text-align: center;
+        align-items: center;
+    }
+    .espacio{
+        margin-top: 2%;
+    }
+    .color{
+        color: aliceblue;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const cartButtons = document.querySelectorAll('.add-to-cart');
+
+    cartButtons.forEach(button => {
+        button.addEventListener('click', async (event) => {
+            const cartId = event.target.getAttribute('data-cartid');
+            const productId = event.target.getAttribute('data-productid');
+
+            if (!cartId) {
+                console.info(cartId);
+                return;
+            }        
+
+            try {
+                const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+        
+                    }
+                });
+
+                const contentType = response.headers.get("content-type");
+                let data;
+
+                if (contentType && contentType.includes("application/json")) {
+                    data = await response.json();
+                } else {
+                    data = await response.text(); 
+                }
+
+                if (response.ok) {
+                    Toastify({
+                        text: "Producto agregado al carrito exitosamente",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "green",
+                        }
+                    }).showToast();
+                } else {
+                    Toastify({
+                        text: data.payload || "Error al agregar el producto al carrito",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "right",
+                        style: {
+                            background: "red",
+                        }
+                    }).showToast();
+                }
+            } catch (error) {
+                console.error("Error en la solicitud:", error); // Loguear el error en la consola
+                Toastify({
+                    text: "Ocurrió un error",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    style: {
+                            background: "red",
+                        }
+                }).showToast();
+            }
+        });
+    });
+});
+</script>

@@ -43,35 +43,40 @@
         font-size: large;
         padding: 1rem;
     }
+    .body{
+    background-color: rgb(128, 119, 119)
+    }
 </style>
 
-
-<div class="login-container">
+<body>
     
-    <h2><b>Recupero de contraseña</b></h2>
-
-    <form action="/api/auth/restorepassword2" method="post" style="margin-top: 32px;">
-        <div class="containerbuttons" style="width: 300px; margin-bottom: 32px;">
-            <p class="text">Ingresá tu nueva contraseña</p>
-            
-            <input type="password" name="password" class="form-control radius" placeholder="Nueva contraseña" required="required" autofocus="autofocus">
-            <br>
-            <input type="password" name="repeatPassword" class="form-control radius" placeholder="Repite la contraseña" required="required" autofocus="autofocus">
-        </div>
-
+    <div class="login-container">
         
-        {{#if showError}}
-            <div class="alert alert-danger" role="alert" style="margin-top: 16px;">
-                {{ errorMessage }}
+        <h2><b>Recupero de contraseña</b></h2>
+
+        <form action="/api/auth/restorepassword2" method="post" style="margin-top: 32px;">
+            <div class="containerbuttons" style="width: 300px; margin-bottom: 32px;">
+                <p class="text">Ingresá tu nueva contraseña</p>
+                
+                <input type="password" name="password" class="form-control radius" placeholder="Nueva contraseña" required="required" autofocus="autofocus">
+                <br>
+                <input type="password" name="repeatPassword" class="form-control radius" placeholder="Repite la contraseña" required="required" autofocus="autofocus">
             </div>
-        {{/if}}
-
-        <div class="containerbuttons">
-            <button type="submit" class="btn btn-success buttons">Enviar</button>
-            
 
             
-        </div>
+            {{#if showError}}
+                <div class="alert alert-danger" role="alert" style="margin-top: 16px;">
+                    {{ errorMessage }}
+                </div>
+            {{/if}}
 
-    </form>
-</div>
+            <div class="containerbuttons">
+                <button type="submit" class="btn btn-success buttons">Enviar</button>
+                
+
+                
+            </div>
+
+        </form>
+    </div>
+</body>

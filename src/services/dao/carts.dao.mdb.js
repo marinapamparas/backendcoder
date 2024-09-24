@@ -27,13 +27,16 @@ class CartsService {
     }
 
     addProduct = async (cid, pid) => {
+        
         // Validaciones
         if (!cid || !pid) {
+            
             throw new CustomError(errorsDictionary.FEW_PARAMETERS)
             // console.error("All fields are mandatory");
             // return;
         }
         if (cid < 0 || pid < 0) {
+            
             throw new CustomError(errorsDictionary.INVALID_PARAMETER)
             //  console.error("The id is not valid")
             //  return;
@@ -42,7 +45,7 @@ class CartsService {
         try {
             // Buscar el carrito por su ID
             const cartExists = await modelCarts.findById(cid);
-
+            
             if (cartExists) {
                 // Verificar si el producto ya está en el carrito
                 const existingProduct = cartExists.products.find(item => item._id.toString() === pid);
@@ -50,14 +53,14 @@ class CartsService {
                 if (existingProduct) {
                     // Si el producto ya existe, incrementar la cantidad
                     existingProduct.quantity++;
-                    console.log("Quantity incremented to product successfully");
+                    
                 } else {
                     // Si el producto no existe, chequear que sea real y después agregarlo al carrito
-
+                    
                     const productDB = await productsDao.getOne(pid)
                         if(productDB){
                             cartExists.products.push({ _id: pid, quantity: 1 });
-                            console.log("Product added to cart successfully");
+                           
                         }else{
                             return;
                         }
@@ -117,26 +120,33 @@ class CartsService {
             console.error("All fields are mandatory");
             return;
         }
-        if (cid < 0 || pid < 0) {
-            console.error("The id is not valid")
-            return;
-        }
 
         try {
-            // Buscar el carrito por su ID
+        
             const cartExists = await modelCarts.findById(cid);
-            
+        
             if (cartExists) {
-                // Verificar si el producto está en el carrito
-                const existingProduct = cartExists.products.find(item => item._id.equals(pid));                
+                const productIndex = cartExists.products.findIndex(item => item._id.equals(pid));
 
-                if (existingProduct) {
-                    existingProduct.deleteOne()                    
-                }    
-                // Guardar el carrito actualizado en la base de datos
-                await cartExists.save();
+                if (productIndex !== -1) {
+                    // Si el producto tiene cantidad mayor a 1, se reduce la cantidad
+                    if (cartExists.products[productIndex].quantity > 1) {
+                        cartExists.products[productIndex].quantity--;
+                        await cartExists.save();
+                        return { success: true, updatedQuantity: cartExists.products[productIndex].quantity }; // Retorna la nueva cantidad
+                    } else {
+                        // Si la cantidad es 1, se elimina el producto
+                        cartExists.products.splice(productIndex, 1);
+                        await cartExists.save();
+                        return { success: true, updatedQuantity: 0 }; // Indica que el producto ha sido eliminado
+                    }
+                } else {
+                    
+                    return { success: false, message: 'Product not found in the cart' }; // Retorna un mensaje de error
+                }
             } else {
-                console.log('The cart does not exist');
+                
+                return { success: false, message: 'Cart not found' }; // Retorna un mensaje de error
             }
         } catch (error) {
             throw new CustomError(errorsDictionary.RECORD_DELETE_ERROR)

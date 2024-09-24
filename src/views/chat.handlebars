@@ -1,21 +1,23 @@
 
 
-
-<div>
-    <h1>CHAT</h1>
+<body>
+    
     <div>
+        <h1>CHAT</h1>
+        <div>
 
-        <input type="text" id="chat" name="chat" placeholder="Ingresar mensaje" style="width:300px;">
-        <br />
+            <input type="text" id="chat" name="chat" placeholder="Ingresar mensaje" style="width:300px;">
+            <br />
 
-        <button onClick="sendMessage()">Enviar</button>
+            <button onClick="sendMessage()">Enviar</button>
+        </div>
+        <div>
+            <p id="chatList"></p>
+        </div>
+
+
     </div>
-    <div>
-        <p id="chatList"></p>
-    </div>
-
-
-</div>
+</body>
 
 <script src="/socket.io/socket.io.js"></script> 
 {{!-- si usamos el script cdn para crear clientes, tenemos que indicarle a que puerto conectarse, asique creariamos un cons wsServer = 'ws://localhost:5000' y eso se lo pasariamos al io(wsServer) para que sepa donde crear el cliente --}}
@@ -71,3 +73,8 @@
     askForUser();
     
 </script>
+<style>
+    .body{
+    background-color: rgb(128, 119, 119)
+    }
+</style>
