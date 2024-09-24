@@ -5,19 +5,25 @@ import CustomError from './CustomError.class.js';
 import { logger } from './logger.js';
 
 
-export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+//export const createHash = password => bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+
+export const createHash = password => {
+    const hash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+    
+    return hash;
+};
 
 //export const isValidPassword = (user, password) => bcrypt.compareSync(password, user.password);
 
 export const isValidPassword = async (user, password) => {
     try {
-      return await bcrypt.compare(password, user.password);
+      return await bcrypt.compare(password.trim(), user.password);
     } catch (error) {
         logger.error(`Error comparing passwords: ${error}`)
         //console.error('Error comparing passwords:', error);
       return false;
     }
-  };
+};
 
 //la duracion de expiresIn se puede poner como string '1h' es 1 hora, '5m' son 5 minutos
 export const createToken = (payload, duration) => jwt.sign(payload, config.SECRET, { expiresIn: duration });

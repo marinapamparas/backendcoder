@@ -137,7 +137,7 @@ auth.post('/restorepassword', async (req, res) => {
                 from: `no-reply <${config.GMAIL_APP_USER}>`, 
                 to: `${user.email}`,
                 subject: 'Recupero de contraseña',
-                html: `<div><h2>¿Olvidaste tu contraseña?</h2><h3>Para restaurarla ingresa a este link:</h3><p>http://localhost:8080/restore?temp_token=${token}</p><br><p>por favor no responder este mail, es automático</p></div>`
+                html: `<div><h2>¿Olvidaste tu contraseña?</h2><h3>Para restaurarla ingresa a este link:</h3><p>https://almacenonline.onrender.com/restore?temp_token=${token}</p><br><p>por favor no responder este mail, es automático</p></div>`
                 
             });
             res.redirect('/emailrecoverysend')

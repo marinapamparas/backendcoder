@@ -7,6 +7,7 @@ import { errorsDictionary } from '../../config.js';
 import CustomError from '../CustomError.class.js';
 
 
+
 const CMMDB = new CartsManager();
 
 class UsersService {
@@ -32,7 +33,7 @@ class UsersService {
                 lastName : newData.lastName,
                 age : newData.age,
                 email : newData.email,
-                password : createHash(newData.password),
+                password : newData.password,
                 _cart_id: newCart._id 
             }
 
@@ -60,6 +61,12 @@ class UsersService {
     autenticationUser = async (username, password) => {
         try {
 
+            if(username == "" || password == "")
+            {
+                console.error('datos vacios');
+                return null
+            }
+
             const user = await modelUsers.findOne({ email: username });
             
             if (!user) {
@@ -68,7 +75,7 @@ class UsersService {
             }
             if(password){
                 
-                if (isValidPassword(user, password)){
+                if (await isValidPassword(user, password)){
                     const userChequeado = user;
                     
                     return userChequeado;
@@ -76,7 +83,7 @@ class UsersService {
                 
             }else{
                 
-                return user;
+                return null;
             }
       
         } catch (error) {

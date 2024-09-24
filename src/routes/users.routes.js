@@ -3,7 +3,8 @@ import { uploader } from "../services/uploader.js";
 import UsersManager from "../controllers/users.manager.js";
 import config from "../config.js";
 import nodemailer from "nodemailer";
-import { handlePolicies, verifyToken } from "../services/utils.js";
+import { handlePolicies, verifyToken, createHash } from "../services/utils.js";
+import bcrypt from 'bcrypt';
 
 const users = Router();
 
@@ -18,6 +19,17 @@ const transport = nodemailer.createTransport({
     }
 });
 
+users.get('/prueba', async(req, res)=>{
+    
+    const testPassword = 'abcd';  // La contraseña que sabes que fue hasheada
+    console.log("testPass", testPassword)
+    const hash= createHash(testPassword);
+    console.log("hash", hash)
+    const testHash = '2b$10$zmo3mU3.xRKlI0zOKHOgsOfCmydwWQCd/JymYBkBjCzBwf0TAfL8C'; // El hash almacenado
+    const isMatch = bcrypt.compareSync(testPassword, testHash);
+    console.log("Test manual:", isMatch);  // Debería ser true si el hash es correcto para 'abcd'
+
+})
 
 users.get('/:uid', async (req,res)=>{
     try{ 
