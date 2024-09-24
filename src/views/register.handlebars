@@ -42,7 +42,7 @@
         <h1><b>Almacén online</b></h1>
         <h2><b>Registro</b></h2>
         </div>
-        {{!-- <form id="loginForm" style="margin-top: 32px;"> --}}
+       
         <form action="/api/auth/jwtregister" method="post" style="margin-top: 32px;">
             <div class="input-group" style="width: 100%; margin-bottom: 8px;">
                 <span class="input-group-text" id="group1"><i class="fa-solid fa-user"></i></span>
@@ -62,10 +62,7 @@
             <div class="input-group" style="width: 100%; margin-bottom: 8px;">
                 <span class="input-group-text" id="group4"><i class="fa-solid fa-venus-mars"></i></span>
                 <input type="number" name="age" class="form-control" placeholder="Age" required="required" autocomplete="age">
-                {{!-- <select name="gender" placeholder="Gender" class="form-control">
-                    <option value="Female">Femenino</option>
-                    <option value="Male">Masculino</option>
-                </select> --}}
+                
             </div>
 
             <div class="input-group" style="width: 100%; margin-bottom: 32px;">
@@ -88,11 +85,3 @@
     </div>
 </body>
 
-<script>
-    const visit = (destination) => {
-        window.location.replace(destination);
-    }
-
-
-
-</script>

@@ -42,16 +42,11 @@ const prodLogger = winston.createLogger({
                 winston.format.simple()
             )
          }),
+        //Tambien estaba guardando por file, pero el deploy se me rompia si lo dejaba, asique lo tuve que comentar y dejarlo solo por consola.
         // new winston.transports.File({ level: 'http', filename: `${config.DIRNAME}/logs/errors.log`})
     ]
 });
 
-// const addLogger = (req, res, next) => {
-//     //req.logger = devLogger;
-//     req.logger = config.MODE === 'dev' ? devLogger : prodLogger;
-//     //req.logger.http(`${new Date().toDateString()} ${req.method} ${req.url}`);
-//     next();
-// }
 
 
 export const logger = config.MODE === "dev" ? devLogger : prodLogger;

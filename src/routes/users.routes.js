@@ -140,7 +140,8 @@ users.post('/updaterole', verifyToken, handlePolicies (['ADMIN']), async(req,res
         console.error('Error al modificar el rol de usuario:', error);
         res.status(500).send('Error del servidor');
     }
-})
+});
+
 users.delete ('/deleteuser', verifyToken, handlePolicies (['ADMIN']), async(req, res)=>{
     try{
         const { userId } = req.body;
@@ -157,7 +158,7 @@ users.delete ('/deleteuser', verifyToken, handlePolicies (['ADMIN']), async(req,
         console.error('Error al borrar el usuario de la db:', error);
         res.status(500).send('Error del servidor');
     }
-})
+});
 
 users.delete ( '/', async(req,res)=>{
     try{
@@ -192,9 +193,5 @@ users.delete ( '/', async(req,res)=>{
         res.status(500).send('Error del servidor');
     }
 });
-
-
-
-
 
 export default users;

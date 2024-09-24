@@ -17,32 +17,33 @@ let cookie = {};
 
 describe('Test de integración Products', function () {
     
-    before(async function () {
-        if (mongoose.connection.readyState !== 1) {
-            console.error('Mongoose connection is not ready.');
-            return;
-            }
+    //Esta conectado a mi base de datos, por lo que no descomentar a menos que se reubique en una db para test.
+    // before(async function () {
+    //     if (mongoose.connection.readyState !== 1) {
+    //         console.error('Mongoose connection is not ready.');
+    //         return;
+    //         }
         
-            // Seleccionar la base de datos 'ecommerce'
-            const db = mongoose.connection.useDb('ecommerce');
+    //         // Seleccionar la base de datos 'ecommerce'
+    //         const db = mongoose.connection.useDb('ecommerce');
           
-            // Obtener la colección 'users_test'
-            const collection = db.collection('users_test');
+    //         // Obtener la colección 'users_test'
+    //         const collection = db.collection('users_test');
           
-            try {
-                // Intenta eliminar la colección
-                await collection.drop();
-                console.log('Collection dropped successfully.');
-            } catch (err) {
-            // Verifica si la colección no existe
-            if (err.codeName === 'NamespaceNotFound') {
-              console.log('Collection does not exist, nothing to drop.');
-            } else {
-              console.error('Error dropping collection:', err);
-              throw err;
-            }
-        }
-    });
+    //         try {
+    //             // Intenta eliminar la colección
+    //             await collection.drop();
+    //             console.log('Collection dropped successfully.');
+    //         } catch (err) {
+    //         // Verifica si la colección no existe
+    //         if (err.codeName === 'NamespaceNotFound') {
+    //           console.log('Collection does not exist, nothing to drop.');
+    //         } else {
+    //           console.error('Error dropping collection:', err);
+    //           throw err;
+    //         }
+    //     }
+    // });
         
     this.timeout(5000); // Aumenta el timeout a 5 segundos para todas las pruebas en esta suite
 

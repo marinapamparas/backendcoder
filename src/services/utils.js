@@ -55,7 +55,7 @@ export const verifyRequiredBody = (requiredFields) =>{
             logger.error(`Faltan parámetros obligatorios o se enviaron vacíos, se requiere: ${requiredFields}`)
             throw new CustomError(errorsDictionary.FEW_PARAMETERS)
         };
-            //return res.status(400).send({origin: config.SERVER, payload: 'Faltan propiedades', requiredFields});
+        
         next();
     };
 };

@@ -1,8 +1,6 @@
 import { Router } from "express";
 import config from "../config.js";
-//import UsersManager from "../controllers/UsersManagerMongoDB.js";
 import UsersManager from "../controllers/users.manager.js";
-import session from "express-session";
 import { handlePolicies, verifyRequiredBody, createToken, verifyToken, isValidPassword, createHash } from "../services/utils.js";
 import initAuthStrategies, { passportCall } from "../services/auth/passport.strategies.js";
 import passport from "passport";
@@ -17,7 +15,7 @@ const UMMDB = new UsersManager ();
 initAuthStrategies();
 
 
-//configuracion de un transporte:
+//configuracion de un transporte para mailing:
 const transport = nodemailer.createTransport({
     service: 'gmail',
     port: 587,
@@ -78,7 +76,7 @@ auth.get('/ghlogincallback', passport.authenticate('ghlogin', {failureRedirect: 
 });
 
 
-//endpoint para chequear a traves de passport el token
+
 auth.get('/ppprivate', passportCall('jwtlogin'), handlePolicies (['ADMIN', 'PREMIUM']), async (req, res) => {
     try{
         console.log(req.user._doc.role)
@@ -88,37 +86,31 @@ auth.get('/ppprivate', passportCall('jwtlogin'), handlePolicies (['ADMIN', 'PREM
         }else{
             res.status(404).send({ origin: config.SERVER, payload: 'No tenes autorizacion' })
         }
-        // res.redirect ('/api/views/profile')
+        
     } catch (err){
         res.status(500).send({origin:config.SERVER, payload:null, error: err.messages})
     }
 })
 
 
-
-auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'password']),passport.authenticate('register', { failureRedirect: `http://localhost:8080/register?error=${encodeURI('No se pudo hacer el registro exitosamente')}`}), async (req, res) => {
+auth.post('/jwtregister', verifyRequiredBody(['firstName','lastName','email', 'password', 'age']),passport.authenticate('register', { failureRedirect: `http://localhost:8080/register?error=${encodeURI('No se pudo hacer el registro exitosamente')}`}), async (req, res) => {
     try{
         const date = moment().toDate();
+        
         req.logger.info(`Se ha registrado exitosamente un usuario ${date}`);
         await transport.sendMail({
             from: `no-reply <${config.GMAIL_APP_USER}>`, 
             to: `${req.user._doc.email}`,
             subject: 'Registro exitoso',
             html: '<div><img src="cid:logo1" width="50" height="50"></img><h2>Bienvenido!</h2><h3>Te registraste exitosamente a mi ecommerce!</h3><br><p>Gracias por formar parte de nuestro sistema</p> <br><p>Esperamos recibir muchas compras de tu parte</p> <br><p>por favor no responder este mail, es automático</p></div>',
-            // attachments:[{
-            //     filename:'logo.jpeg',
-            //     path:__dirname+'public/img/logo.jpeg',
-            //     cid:'logo1'
-            // }]
+            
         });
-
-        //normalmente haria un redirect a otra plantilla de handlebars, pero para que funcione el supertest y reciba un payload y no un {} vacio, voy a comentar el redirect y dejar este res.status: 
+        res.redirect('/login')
+        //hago un redirect a otra plantilla de handlebars para una mejor experiencia de usuario, 
+        //pero para que funcione el supertest y reciba un payload y no un {} vacio, voy a dejar este res.status: 
         
-        res.status(200).send({ origin: config.SERVER, payload: 'El usuario se registro exitosamente' })
-        
-        //res.redirect('/api/views/login');
+        // res.status(200).send({ origin: config.SERVER, payload: 'El usuario se registro exitosamente' })
 
-    
     } catch (err){
         res.status(500).send({origin:config.SERVER, payload:null, error: err.messages})
     }

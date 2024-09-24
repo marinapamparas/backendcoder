@@ -13,7 +13,6 @@ import MongoStore from 'connect-mongo';
 import auth from './routes/auth.routes.js'
 import users from './routes/users.routes.js';
 import test from './routes/test.routes.js';
-//import TestRouter from './routes/test.routes.js';
 import passport from 'passport';
 import MongoSingleton from './services/mongo.singleton.js';
 import cors from 'cors';
@@ -21,8 +20,7 @@ import errorsHandler from './services/errors.handler.js';
 import { logger, addLogger } from './services/logger.js';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUiExpress from 'swagger-ui-express';
-import cluster from 'cluster';
-import { cpus } from 'os';
+
 
 
 
@@ -37,10 +35,9 @@ import { cpus } from 'os';
     app.use(express.urlencoded({ extended:true}));
     app.use(cookieParser(config.SECRET));
     app.use(session({
-        //store: new fileStorage({path:'./sessions', ttl:100, retries:0}),
         store: MongoStore.create({
-            mongoUrl: config.MONGODB_URI,
-            ttl: 600
+        mongoUrl: config.MONGODB_URI,
+        ttl: 600
         }),
         secret: config.SECRET,
         resave: true,
@@ -54,8 +51,7 @@ import { cpus } from 'os';
         origin: '*'
     }));
     
-    //como aplicar handlebars en nuestra app, con estos metodos en app:
-    
+        
     const hbs = handlebars.create({
         helpers: {
             eq: function (a, b) {
@@ -83,9 +79,7 @@ import { cpus } from 'os';
    
     app.get('/favicon.ico', (req, res) => res.status(204));
 
-
-    //app.use('/api/test', new TestRouter().getRouter());
-    //la parte estatica que se muestra:
+    
     app.use('/', express.static('src/public'));
     
     // Generamos objeto base config Swagger y levantamos endpoint para servir la documentación
@@ -98,7 +92,7 @@ import { cpus } from 'os';
                 version: '1.0.0'
             },
         },
-        apis: ['src/docs/**/*.yaml'], // todos los archivos de configuración de rutas estarán aquí
+        apis: ['src/docs/**/*.yaml'], 
     };
 
     const specs = swaggerJSDoc(swaggerOptions);

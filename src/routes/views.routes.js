@@ -1,7 +1,6 @@
 import { Router } from "express";
 import  initSocket  from '../services/sockets.js';
 import ProductsManager from "../controllers/products.manager.js";
-//import { CartManagerMongoDb } from "../controllers/CartManagerMongoDb.js";
 import CartsManager from "../controllers/carts.manager.js";
 import { handlePolicies, verifyToken } from "../services/utils.js";
 import CustomError from "../services/CustomError.class.js";
@@ -19,7 +18,6 @@ const socket = initSocket();
 socket.on('connect', () => {
     console.log('Conectado al servidor WebSocket');
 });
-
 
 views.get('/', async (req,res)=>{
 
@@ -44,9 +42,8 @@ views.get('/', async (req,res)=>{
         
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error al leer el archivo de productos:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR);
     }
 });
 
@@ -59,9 +56,8 @@ views.get('/realtimeproducts', async (req,res)=>{
         res.status(200).render('realtimeproducts', data)
 
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error al cargar el producto:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -105,10 +101,8 @@ views.get('/products', async (req,res)=>{
     }catch (error){
         console.error('Error al leer el archivo de productos:', error);
         throw new CustomError(errorsDictionary.INTERNAL_ERROR)
-        
     }
 });
-
 
 views.get('/cart/:cid', async (req,res)=>{
 
@@ -131,19 +125,18 @@ views.get('/cart/:cid', async (req,res)=>{
     }
 });
 
-
 views.get('/login', async (req,res)=>{
 
     try{
-        if (req.user) return res.redirect('/api/views/products')
+        
         res.status(200).render('login', {});
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
+
 views.get('/register', async (req,res)=>{
 
     try{
@@ -151,9 +144,8 @@ views.get('/register', async (req,res)=>{
         res.status(200).render('register', {});
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -167,9 +159,8 @@ views.get('/profile', async (req,res)=>{
         res.status(200).render('profile', { user: user });
     
     }catch (error){
-        //throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error:', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -180,9 +171,8 @@ views.get('/passwordrecovery', async (req,res)=>{
         res.status(200).render('passwordrecovery', {});
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -193,12 +183,10 @@ views.get('/emailrecoverysend', async (req,res)=>{
         res.status(200).render('emailrecoverysend', {});
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
-
 
 views.get('/restore', async (req,res)=>{
 
@@ -207,12 +195,10 @@ views.get('/restore', async (req,res)=>{
         res.status(200).render('restore', {});
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
-
 
 views.get('/premiumDocs', async (req,res)=>{
 
@@ -221,9 +207,8 @@ views.get('/premiumDocs', async (req,res)=>{
         res.status(200).render('premiumDocs', {});
     
     }catch (error){
-        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
         console.error('Error cargar el chat', error);
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INTERNAL_ERROR)
     }
 });
 
@@ -238,9 +223,9 @@ views.get('/administration', verifyToken, handlePolicies (['ADMIN']), async (req
     
     }catch (error){
         console.error("Error en la ruta /administration: ", error);
-        //throw new CustomError(errorsDictionary.INVALID_AUTHORIZATION)
-        
-        res.status(500).send('Error del servidor');
+        throw new CustomError(errorsDictionary.INVALID_AUTHORIZATION)
     }
 });
+
+
 export default views;
